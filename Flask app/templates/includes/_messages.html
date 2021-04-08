@@ -1,0 +1,19 @@
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{category}} text-center mb-0 container" style="font-size: 1.2rem; position: absolute; top:4.5rem; left:0; right:0; margin-left: auto; margin-right: auto;">{{message}} <i class="fa fa-times" style="position: absolute; top: 1rem; right:1rem;"></i></div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+
+{% if error %}
+    <div class="alert alert-danger text-center mb-0 container" style="font-size: 1.2rem; position: absolute; top:4.5rem; left:0; right:0; margin-left: auto; margin-right: auto;">{{error}} <i class="fa fa-times" style="position: absolute; top: 1rem; right:1rem;"></i></div>
+{% endif %}
+
+{% if success %}
+    <div class="alert alert-success text-center mb-0 container" style="font-size: 1.2rem; position: absolute; top:4.5rem; left:0; right:0; margin-left: auto; margin-right: auto;">{{success}} <i class="fa fa-times" style="position: absolute; top: 1rem; right:1rem;"></i></div>
+{% endif %}
+
+
+<!-- <i class="fa fa-times" style="position: absolute; top: 1rem; right:1rem;"></i> -->

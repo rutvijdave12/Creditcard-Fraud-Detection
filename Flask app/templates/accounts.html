@@ -1,0 +1,104 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+
+{% include 'includes/_navbar.html' %}
+
+
+<section class="dashboard">
+    <div class="container-fluid">
+        <div class="heading">
+            <h1 class="text-center">Welcome to your Dashboard <em>{{user.full_name}}</em></h1>
+        </div>
+        <div class="accounts pt-5">
+            {% for bank_account in bank_accounts %}
+            <div class="row d-flex justify-content-center">
+                <div class="card col-lg-8 col-10 ">
+                  <div class="card__flipper">
+                    <div class="card__front row">
+                      <div class="col-xs-8 h-6">
+                        <div class="image"></div>
+                      </div>
+                      <div class="col-xs-4 h-4 d-flex align-items-center justify-content-center">
+                          {% if bank_account.account_type == "savings" %}
+                          <p class="account_type"><h1 class="first-letter">S</h1><span class="small-letters">avings</span></p>
+                          {% else %}
+                          <p class="account_type"><h1 class="first-letter">C</h1><span class="small-letters">urrent</span></p>
+                          {% endif %}
+                      </div>
+                    </div>
+                    <div class="card__back">
+                      <div class="row">
+                        <div class="col-md-7 d-none d-md-flex justify-content-center justify-content-md-start align-items-center">
+                          <div class="creditcard cover">
+                            <div class="creditcard__front creditcard__part creditcard-layer">
+                              <div class="chip"></div>
+                              <p class="creditcard_numer">{{bank_account.creditcard.cc_no}}</p>
+                              <div class="card_bottom">
+                                <div class="creditcard__space-50 d-flex flex-column">
+                                  <span class="creditcard__label">Card holder</span>
+                                  <p class="creditcard__info">{{bank_account.user.full_name}}</p>
+                                </div>
+                                <div class="creditcard__space-25 d-flex flex-column">
+                                  <span class="creditcard__label">Expires</span>
+                                        <p class="creditcard__info">{{bank_account.creditcard.expiry_date.month}}/{{bank_account.creditcard.expiry_date.year}}</p>
+                                </div>
+                                <div class="creditcard__space-25 d-flex flex-column">
+                                  <img src="{{ url_for('static',filename='img/mc_vertical.svg') }}" alt="">
+                                </div>
+                              </div>
+                            </div>
+                            <div class="creditcard__back creditcard__part creditcard-layer">
+                              <div class="creditcard__black-line"></div>
+                              <div class="creditcard__back-content">
+                                <div class="creditcard__secret">
+                                  <p class="creditcard__secret--last">{{bank_account.creditcard.cvv}}</p>
+                                </div>
+                                <div class="creditcard_bottom">
+                                  <div class="pull-right creditcard__space-25 d-flex flex-column">
+                                    <img src="{{ url_for('static',filename='img/mc_vertical.svg') }}" alt="">
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-md-5 d-flex flex-md-row align-items-center justify-content-md-start flex-column justify-content-center">
+                          <h3 class="text-center d-block my-3"> View More Details
+                            <br>
+                            <a href="/{{user.username}}/accounts/{{bank_account.id}}" class="ml-3 btn-get-started scrollto d-inline-flex align-items-center justify-content-center align-self-center mt-3">
+                                <span>Proceed</span>
+                                <i class="bi bi-arrow-right"></i>
+                            </a>
+                          </h3>
+                          <!-- <h3 class="text-center d-block my-md-0 my-3"> View Transactions 
+                            <br>
+                            <a href="/{{user.username}}/accounts/new" class="ml-3 btn-get-started scrollto d-inline-flex align-items-center justify-content-center align-self-center mt-3 mt-md-1">
+                                <span>Proceed</span>
+                                <i class="bi bi-arrow-right"></i>
+                            </a>
+                          </h3> -->
+                        </div>
+                      </div>
+                        <!-- {{bank_account.user.full_name}}
+                        {{bank_account.creditcard.cc_no}} -->
+                    </div>
+                  </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="create-account">
+            <h3 class="text-center"> Create a new account  
+                <a href="/{{user.username}}/accounts/new" class="ml-3 btn-get-started scrollto d-inline-flex align-items-center justify-content-center align-self-center">
+                    <span>Proceed</span>
+                    <i class="bi bi-arrow-right"></i>
+                </a>
+            </h3>
+        </div>
+    </div>
+</section>
+
+{% include 'includes/_dependencies.html' %}
+
+{% endblock %}

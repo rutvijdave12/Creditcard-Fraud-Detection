@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>Diagon Alley</title>
+  <link href="http://fonts.cdnfonts.com/css/harry-potter" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+          
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main_1.css" />
+</head>
+
+<body>
+ 
+  <header class="hero">
+    <div class="account">
+      <!-- <a href="/sign-in"><button class="sign-in"> Sign-In</button></a>
+      <a href="/sign-up"><button class="sign-up"> Sign-Up</button></a> -->
+      <a href="/" style="text-decoration: none;"><span>Hello,<%= user.username %></span></a>
+      <a href="/" style="text-decoration: none;"><span>Log Out</span></a>
+    </div>
+      
+  </header>
+
+  <main>
+
+    <section class="featured">
+      <div class="container">
+        <h2 class="section-title">Featured Products</h2>
+        <div class="split"> 
+          <% books.forEach((book)=>{%>
+          <a href="/book/<%=book._id %>" class="featured__item">
+            <img src="<%= book.bookimage %>" alt="" class="featured__img">
+            <p class="featured__details"><span class="price">$20</span><strong class="title"><%= book.bookname %></strong></p>
+          </a>
+        <%})%>
+          
+          
+        
+        </div>
+      </div>
+    </section>
+
+<footer>
+
+</footer>
+
+  </main>
+
+</body>
+
+</html>

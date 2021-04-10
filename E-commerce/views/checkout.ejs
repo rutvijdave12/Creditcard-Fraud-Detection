@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <link href="https://fonts.googleapis.com/css?family=Poppins:600&display=swap" rel="stylesheet">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="http://fonts.cdnfonts.com/css/harry-potter" rel="stylesheet">
+
+    <title>Checkout</title>
+    <link rel="stylesheet" href="/css/checkout.css">
+
+</head>
+<body style="background-image: url(<%= bill.book.himg %> );" >
+    <h2 class="title">Checkout  Page </h2>
+    <div class="container">
+        
+        <div class="login-content">
+            <div class="detail">
+                <h3>Name:<em class="copy"><%= bill.name %></em></h3>
+                <h3>Mobile Number:<em class="copy"><%= bill.mnumber %></em></h3>
+                <h3>Address:<em class="copy"><%= bill.address %> </em></h3>
+                <h3>City:<em class="copy"> <%= bill.city %></em></h3>
+                <h3>Country:<em class="copy"><%= bill.country %></em></h3>
+                <h3>Book Name:<em class="copy"><%= bill.book.bookname %></em></h3>
+                <h3>Bill Amount:<em class="copy"><%= bill.cost %>$</em></h3>
+                <a href="/<%= bill._id %>/bill/checkout/pay" style="text-decoration: none;"><input type="submit" class="btn" value="Checkout"  ></a>
+            </div>
+              
+
+                
+        
+        </div>
+        <div class="img_1">
+			<img  src="<%=  bill.book.bookimage  %>" width="350" height="450">
+		</div>
+    </div>
+   
+   
+</body>
+</html>

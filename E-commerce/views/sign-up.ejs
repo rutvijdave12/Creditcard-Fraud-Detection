@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Sign-Up</title>
+	<link rel="stylesheet" type="text/css" href="css/sign-up.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+	<link href="https://fonts.googleapis.com/css?family=Poppins:600&display=swap" rel="stylesheet">
+	<script src="https://kit.fontawesome.com/a81368914c.js"></script>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+	<img class="wave" src="https://cdn.dribbble.com/users/2851002/screenshots/6870633/harry_potter.gif">
+	<div class="container">
+		<div class="img">
+			<!-- <img src="img/bg.svg"> -->
+		</div>
+		<div class="login-content">
+			<form action="/sign-up" method="POST">
+				<!-- <img src="img/avatar.svg"> -->
+				<h2 class="title">Create New Account</h2>
+           		<div class="input-div one">
+           		   <div class="i">
+           		   		<i class="fas fa-user"></i>
+           		   </div>
+           		   <div class="div">
+           		   		<h5>Username</h5>
+           		   		<input type="text" class="input" name="name" required>
+           		   </div>
+           		</div>
+				   <div class="input-div one">
+					<div class="i">
+							<i class="fas fa-envelope"></i>
+					</div>
+					<div class="div">
+							<h5>E-mail</h5>
+							<input type="email" class="input" name="email" required>
+					</div>
+				 </div>
+           		<div class="input-div pass">
+           		   <div class="i"> 
+           		    	<i class="fas fa-lock"></i>
+           		   </div>
+           		   <div class="div">
+           		    	<h5>Password</h5>
+           		    	<input type="password" class="input" name="password" required>
+            	   </div>
+            	</div>
+				<!-- <div class="input-div pass">
+					<div class="i"> 
+						 <i class="fas fa-lock"></i>
+					</div>
+					<div class="div">
+						 <h5>Verify Password</h5>
+						 <input type="password" class="input" required>
+				 </div>
+			  </div> -->
+		
+			  <!-- <p><input type="file"  accept="image/*" name="image" id="file"  onchange="loadFile(event)" style="display: none;" required></p>
+    <p><label for="file" style="cursor: pointer;" class="input image_input">Upload Your Image</label> <div class="tooltip"> <i class="fa">&#xf05a;</i>
+	<span class="tooltiptext">Upload Your Image</span>
+  </div></p> -->
+
+<!-- <p><img id="output" width="150" height="200" /></p> -->
+			  <br>
+            	<input type="submit" class="btn" value="Sign-Up">
+            </form>
+        </div>
+    </div>
+    <script type="text/javascript" src="js/sign-up.js"></script>
+</body>
+</html>

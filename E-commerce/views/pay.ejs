@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Payment</title>
+	<link rel="stylesheet" type="text/css" href="/css/pay.css">
+	<link href="https://fonts.googleapis.com/css?family=Poppins:600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body style="background-image: url(<%= bill.book.himg%>);">
+	
+	<div class="container">
+		
+		<div class="login-content">
+			<form action="/pay" method="POST" class="pay_form">
+				<h2 class="title">Payment</h2>
+           		<div class="input-div one">
+           		   <div class="i">
+           		   		<i class="fa fa-credit-card" style="color: black;"></i>
+           		   </div>
+           		   <div class="div">
+           		   		<h5 style="color: black;">Credit Card Number</h5>
+           		   		<input type="text" class="input">
+           		   </div>
+           		</div>
+                   <div class="input-div one">
+                    <div class="i">
+                            <i class="fa fa-credit-card" style="color: black;"></i>
+                    </div>
+                    <div class="div">
+                            <h5 style="color: black;">CVV</h5>
+                            <input type="text" class="input">
+                    </div>
+                 </div>
+                 <div class="input-div one">
+                    <div class="i">
+                            <i class="fa fa-dollar" style="color: black;"></i>
+                    </div>
+                    <div class="div">
+                            <!-- <h5>Amount</h5> -->
+                            <input type="text" class="input" value=" <%= bill.cost %>" disabled>
+                    </div>
+                 </div>
+                 <div class="input-div one">
+                    <div class="i">
+                            <i class="fas fa-book" style="color: black;"></i>
+                    </div>
+                    <div class="div">
+                            <!-- <h5>Description</h5> -->
+                            <input type="text" class="input" value="<%= bill.book.bookname %>" disabled>
+                    </div>
+                 </div>
+           	
+            	
+            	<input type="submit" class="btn" value="Pay">
+            </form>
+        </div>
+    </div>
+    <script src="https://kit.fontawesome.com/a81368914c.js"></script>
+    <script type="text/javascript" src="/js/pay.js"></script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Info</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link href="https://fonts.googleapis.com/css?family=Poppins:600&display=swap" rel="stylesheet">
+	<link href="http://fonts.cdnfonts.com/css/harry-potter" rel="stylesheet">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet"  href="/css/info.css">
+	
+</head>
+<body style="background-image:url(<%= book.himg %>)">
+	
+	<div class="container" >
+		<div class="img">
+			<img src="<%=book.bookimage%>" height="591" width="375">
+		</div>
+		<div class="login-content">
+			<h4 class="collection" style="color: #3b4e6d">
+				Harry Potter
+			  </h4>
+			<h1  style="color: #3b4e6d">
+				<%= book.bookname %>
+			  </h1>
+			  <p>Author:<span><em>J.K.Rowling</em></span></p> 
+			  <br>
+			  <p class="size"><%= book.para1 %></p>
+			
+			<% if(book.para2){ %>
+				<br>
+				<p class="size"><%= book.para2 %></p>
+				<%}%>
+
+				<%if(book.para3){%>
+				<br >
+				<p class="size"><%= book.para3 %></p>
+				<br>
+
+				<%}%>
+			<br>
+			<hr style="color: white;">
+			<br>
+			
+			<a href="/<%=book._id %>/bill" class="cta-primary icon-book3" ng-click="showModalComponent('get-the-book')" target="_self"><i class="fa fa-book"></i> <strong>  Get this book</strong></a>
+			
+		</div>
+		<br>
+	<footer>
+
+	</footer>
+		
+    </div>
+    <script type="text/javascript" src="js/info.js"></script>
+	<script src="https://kit.fontawesome.com/a81368914c.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Bill</title>
+	<link rel="stylesheet" type="text/css" href="/css/bill.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link href="https://fonts.googleapis.com/css?family=Poppins:600&display=swap" rel="stylesheet">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+	
+	<div class="container">
+		<div class="login-content">
+			<form action="/<%= book._id %>/bill" method="POST">
+				<h2 class="title">Billing Page</h2>
+           		<div class="input-div one">
+           		   <div class="i">
+           		   		<i class="fas fa-user"></i>
+           		   </div>
+           		   <div class="div">
+           		   		<h5>Name</h5>
+           		   		<input type="text" class="input" name="name" required>
+           		   </div>
+           		</div>
+           		<div class="input-div pass">
+           		   <div class="i"> 
+           		    	<i class="fas fa-mobile"></i>
+           		   </div>
+           		   <div class="div">
+           		    	<h5>Mobile Number</h5>
+           		    	<input type="text" class="input" name="number" required>
+						   
+            	   </div>
+            	</div>
+				<div class="input-div pass">
+					<div class="i"> 
+						 <i class="fas fa-address-book"></i>
+					</div>
+					<div class="div">
+						 <h5>Address</h5>
+						 <input type="text" class="input" name="address" required>
+				 </div>
+			  </div>
+			  <div class="input-div pass">
+				<div class="i"> 
+					 <i class="fas fa-address-card"></i>
+				</div>
+				<div class="div">
+					 <h5>City</h5>
+					 <input type="text" class="input" name="city" required>
+			 </div>
+			 
+		  </div>
+		  <div class="input-div pass">
+			<div class="i"> 
+				 <i class="fas fa-address-card"></i>
+			</div>
+			<div class="div">
+				 <h5>Country</h5>
+				 <input type="text" class="input" name="country" required>
+		 </div>
+		 
+	  </div>
+	  
+		  <input type="submit" class="btn" value="Pay" >
+            	
+            	
+            </form>
+			
+        </div>
+		<div class="img_1">
+			<img  src="https://cdn.dribbble.com/users/1413495/screenshots/3456770/harry-potter.gif" alt="">
+		</div>
+		
+		
+    </div>
+	<script src="https://kit.fontawesome.com/a81368914c.js"></script>
+
+    <script type="text/javascript" src="/js/bill.js"></script>
+</body>
+</html>

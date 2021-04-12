@@ -1,51 +1,38 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-// const multer=require('multer');
-const ejs = require('ejs');
-const mongoose = require('mongoose');
-const session = require('express-session');
-const passport = require('passport');
-const passportLocalMongoose = require('passport-local-mongoose');
+const express               = require('express');
+      passport              = require('passport');
+      app                   = express();
+      bodyParser            = require('body-parser');
+      mongoose              = require('mongoose');
+      session               = require('express-session');
+      LocalStrategy         = require("passport-local"),
+      passportLocalMongoose = require('passport-local-mongoose');
+//  multer=require('multer');
 
-const app = express();
+
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.static('public'));
+app.use(express.static(__dirname + '/public'));
 
-app.use(session({
-    secret: 'Alohomora',
-    resave: false,
-    saveUninitialized: false
-    // cookie: { secure: true }
-}));
 
-app.use(passport.initialize());
-app.use(passport.session());
 
 mongoose.connect("mongodb://localhost:27017/userDB", { useNewUrlParser: true, useUnifiedTopology: true })
 mongoose.set('useCreateIndex', true);
 const userSchema = new mongoose.Schema({
     username: {
-        type:String,
-        unique:true
-},
+        type: String,
+        unique: true
+    },
     email: {
-        type:String,
-        unique:true
-},
+        type: String,
+        unique: true
+    },
     password: String
 
 });
 
+
 userSchema.plugin(passportLocalMongoose);
-
 const User = new mongoose.model("User", userSchema);//User Data
-
-passport.use(User.createStrategy());
-
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
-
 
 
 const bookSchema = new mongoose.Schema({
@@ -56,6 +43,7 @@ const bookSchema = new mongoose.Schema({
     himg: String,
     bookimage: String
 })
+
 const Book = new mongoose.model("Book", bookSchema);//book data
 
 const billSchema = new mongoose.Schema({
@@ -70,7 +58,29 @@ const billSchema = new mongoose.Schema({
         ref: "Book"
     }
 })
+
 const Bookbuy = new mongoose.model("Bookbuy", billSchema); //billing data
+
+app.use(session({
+    secret: 'Alohomora',
+    resave: false,
+    saveUninitialized: false
+    // cookie: { secure: true }
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+
+
+app.use(function (req, res, next) {
+    res.locals.currentUser = req.user;
+    next();
+});
+
 
 app.get('/', (req, res) => {
     const book = Book.find({}, (err, allBooks) => {
@@ -88,39 +98,28 @@ app.get('/sign-in', (req, res) => {
     res.render('sign-in');
 })
 
-app.post('/sign-in', (req, res) => {
-    const user=new User({
-        username:req.body.mail,
-        password:req.body.password
-    });
-
-    req.login(user,function(err){
-        if(err){
-            console.log(err);
-        }else{
-            passport.authenticate("local")(req,res,function(){
-                res.redirect("/"+req.user.username);
-            })
-        }
-    })
+app.post("/sign-in", isNotLoggedIn, passport.authenticate("local",
+    {
+        successRedirect: "/",
+        failureRedirect: "/sign-in",
+        badRequestMessage: 'Missing username or password.',
+    }), function(req, res){
+        console.log("in")
+});
 
 
 
-
-
-})
-
-app.get('/logout', function(req, res){
+app.get('/logout', function (req, res) {
     req.logout();
     res.redirect('/');
-  });
-  
+});
+
 app.get('/sign-up', (req, res) => {
     res.render('sign-up');
 })
 
 app.post('/sign-up', (req, res) => {
-    User.register({ username: req.body.username,email: req.body.email }, req.body.password, function (err, user) {
+    User.register({ username: req.body.username, email: req.body.email }, req.body.password, function (err, user) {
 
         if (err) {
             console.log(err)
@@ -128,7 +127,7 @@ app.post('/sign-up', (req, res) => {
         } else {
 
             passport.authenticate("local", { session: true })(req, res, function () {
-                res.redirect("/" + req.user.username);
+                res.redirect("/");
 
             })
         }
@@ -139,31 +138,7 @@ app.post('/sign-up', (req, res) => {
 })
 
 
-app.get("/:id", (req, res) => {
-    Book.find({}, (err, allBooks) => {
-        if (err) {
-            console.log(err);
-        } else {
-            User.find({username:req.params.id}, (err, foundUser) => {
-                if (err) {
-                    console.log(err);
-                }
-                else {
-                    if (req.isAuthenticated()) {
-                        res.render("index_signed", { books: allBooks, user: foundUser });
-                    } else {
-                        res.redirect("/sign-in");
-                    }
-                }
-            });
-        }
-    });
-
-
-
-})
-
-app.get('/book/:id', (req, res) => {
+app.get('/:id', isLoggedIn, (req, res) => {
 
     Book.findById(req.params.id, (err, foundBook) => {
         if (err) {
@@ -181,7 +156,7 @@ app.get('/book/:id', (req, res) => {
 
 
 
-app.get('/:id/bill', (req, res) => {
+app.get('/:id/bill', isLoggedIn, (req, res) => {
     Book.findById(req.params.id, (err, foundBook) => {
         if (err) {
             console.log("13");
@@ -194,7 +169,7 @@ app.get('/:id/bill', (req, res) => {
 
 })
 
-app.post('/:id/bill', (req, res) => {
+app.post('/:id/bill', isLoggedIn, (req, res) => {
 
 
     const userBill = new Bookbuy({
@@ -220,7 +195,7 @@ app.post('/:id/bill', (req, res) => {
 
 })
 
-app.get('/:id/bill/checkout', (req, res) => {
+app.get('/:id/bill/checkout', isLoggedIn, (req, res) => {
 
     Bookbuy.findById(req.params.id).populate("book").exec(function (err, foundBill) {
         if (err) {
@@ -236,7 +211,7 @@ app.get('/:id/bill/checkout', (req, res) => {
 
 })
 
-app.get('/:id/bill/checkout/pay', (req, res) => {
+app.get('/:id/bill/checkout/pay', isLoggedIn, (req, res) => {
 
     Bookbuy.findById(req.params.id).populate("book").exec((err, foundBill) => {
         if (err) {
@@ -250,6 +225,26 @@ app.get('/:id/bill/checkout/pay', (req, res) => {
     })
 
 })
+
+
+// Middleware
+function isLoggedIn(req, res, next) {
+    if (req.isAuthenticated()) {
+        return next();
+    }
+    else {
+        res.redirect("/sign-in");
+    }
+}
+
+function isNotLoggedIn(req, res, next){
+	if(!req.isAuthenticated()){
+		return next();
+	}
+	else{
+		res.redirect("/");
+	}
+} 
 
 
 

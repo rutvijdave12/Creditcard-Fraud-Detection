@@ -42,17 +42,17 @@ passport.deserializeUser(User.deserializeUser());
 
 
 
-const bookSchema = {
+const bookSchema = new mongoose.Schema({
     bookname: String,
     para1: String,
     para2: String,
     para3: String,
     himg: String,
     bookimage: String
-}
+})
 const Book = new mongoose.model("Book", bookSchema);//book data
 
-const billSchema = {
+const billSchema = new mongoose.Schema({
     name: String,
     mnumber: String,
     address: String,
@@ -63,7 +63,7 @@ const billSchema = {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Book"
     }
-}
+})
 const Bookbuy = new mongoose.model("Bookbuy", billSchema); //billing data
 
 app.get('/', (req, res) => {

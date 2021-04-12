@@ -25,8 +25,14 @@ app.use(passport.session());
 mongoose.connect("mongodb://localhost:27017/userDB", { useNewUrlParser: true, useUnifiedTopology: true })
 mongoose.set('useCreateIndex', true);
 const userSchema = new mongoose.Schema({
-    username: String,
-    email: String,
+    username: {
+        type:String,
+        unique:true
+},
+    email: {
+        type:String,
+        unique:true
+},
     password: String
 
 });
@@ -83,56 +89,38 @@ app.get('/sign-in', (req, res) => {
 })
 
 app.post('/sign-in', (req, res) => {
-    // const password=req.body.password;
-    // const email=req.body.email;
+    const user=new User({
+        username:req.body.mail,
+        password:req.body.password
+    });
 
-    // User.findOne({email:email},function(err, foundUser){
-    //     if(err)
-    //     {
-    //         console.log("3");
-    //         console.log(err);
-    //         console.log("4");
-    //     }
-    //     else{
-    //         if(foundUser){
-    //             if(foundUser.password === password){
-    //                res.redirect('/'+foundUser._id);
-    //             }else{
-    //                 console.log("Wrong password");
-    //             }
+    req.login(user,function(err){
+        if(err){
+            console.log(err);
+        }else{
+            passport.authenticate("local")(req,res,function(){
+                res.redirect("/"+req.user.username);
+            })
+        }
+    })
 
-    //         }else{
-    //             res.redirect('/sign-up')
-    //         }
-    //     }
-    // })
+
+
 
 
 })
+
+app.get('/logout', function(req, res){
+    req.logout();
+    res.redirect('/');
+  });
+  
 app.get('/sign-up', (req, res) => {
     res.render('sign-up');
 })
 
 app.post('/sign-up', (req, res) => {
-    // const newUser=new User({
-    //     username:req.body.name,
-    //     password:req.body.password,
-    //     email:req.body.email
-
-    //    });
-
-
-    //    newUser.save(function(err){
-    //        if(err){
-    //         console.log("11");
-    //         console.log(err);
-    //         console.log("12");
-    //        }else{
-    //         res.redirect("/sign-in");
-    //        }    
-    //    })
-
-    User.register({ username: req.body.username, email: req.body.mail }, req.body.password, function (err, user) {
+    User.register({ username: req.body.username,email: req.body.email }, req.body.password, function (err, user) {
 
         if (err) {
             console.log(err)
@@ -140,7 +128,7 @@ app.post('/sign-up', (req, res) => {
         } else {
 
             passport.authenticate("local", { session: true })(req, res, function () {
-                res.redirect("/" + user._id);
+                res.redirect("/" + req.user.username);
 
             })
         }
@@ -156,7 +144,7 @@ app.get("/:id", (req, res) => {
         if (err) {
             console.log(err);
         } else {
-            User.findById(req.params.id, (err, foundUser) => {
+            User.find({username:req.params.id}, (err, foundUser) => {
                 if (err) {
                     console.log(err);
                 }

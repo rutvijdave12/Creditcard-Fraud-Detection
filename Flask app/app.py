@@ -487,7 +487,9 @@ def remote_transaction(key):
                 credit_card = CreditCard.query.filter_by(cc_no=cc_no).first()
                 print(2)
                 print(credit_card)
+                print(33)
                 print(credit_card.cvv)
+                print(333)
                 # check if the cc_no exists
                 try:
                     print(credit_card)
@@ -553,15 +555,19 @@ def remote_transaction(key):
                         except:
                             return "Creditcard has expired"
                     else:
+                        print("exception")
                         raise Exception
                 except:
-                    return "Creditcard is Invalid"
+                    print("failed")
+                    return {"statusCode": 502, "message": "Bad Gateway"}
             else:
                 raise Exception
         except:
-            return "Transaction couldn't happen"
+            print("failed")
+            return {"statusCode": 502, "message": "Bad Gateway"}
     print(description)
-    return {"successCode": 200, "message": "Payment Successful"}
+    print("success")
+    return {"statusCode": 200, "message": "Payment Successful"}
 
 
 

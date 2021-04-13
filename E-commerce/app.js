@@ -28,7 +28,13 @@ const userSchema = new mongoose.Schema({
         type: String,
         unique: true
     },
-    password: String
+    password: String,
+    bills: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Bookbuy"
+        }
+    ]
 
 });
 
@@ -62,6 +68,10 @@ const billSchema = new mongoose.Schema({
     buyer: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
+    },
+    paymentStatus: {
+        type: String, 
+        default: 'pending'
     }
 })
 
@@ -203,9 +213,19 @@ app.post('/:id/bill', isLoggedIn, (req, res) => {
         if (err) {
             console.log(err)
         } else {
-            res.redirect("/" + savedBill._id + "/bill/checkout");
+            User.findOne({username: req.user.username}, function(err, foundUser){
+                if(err){
+                    console.log(err);
+                }
+                foundUser.bills.push(savedBill);
+                foundUser.save(function(err, savedUser){
+                    res.redirect("/" + savedBill._id + "/bill/checkout");
+                })
+            });
+            
         }
-    })
+    });
+
 
 })
 
@@ -250,7 +270,46 @@ app.post('/:id/bill/checkout/pay', isLoggedIn, (req, res) => {
         body: JSON.stringify(body),
         headers: { 'Content-Type': 'application/json' }
     }).then(res => res.json())
-      .then(json => console.log(json));
+      .then(response => {
+          if(response.statusCode === 200){
+              console.log("in")
+              Bookbuy.find({buyer: req.user._id}, function(err, foundBills){
+                  console.log(foundBills);
+                  foundBills.forEach(function(bill){
+                      if(bill.paymentStatus === "pending"){
+                          bill.paymentStatus = "success";
+                          bill.save(function(err, savedBill){
+                              if(err){
+                                  console.log(err);
+                              }
+                              else{
+                                  console.log(savedBill);
+                              }
+                          })  
+                      }
+                  })
+              })
+          }
+          else{
+            Bookbuy.find({buyer: req.user._id}, function(err, foundBills){
+                foundBills.forEach(function(bill){
+                    if(bill.paymentStatus === "pending"){
+                        bill.paymentStatus = "failed";
+                        bill.save(function(err, savedBill){
+                            if(err){
+                                console.log(err);
+                            }
+                            else{
+                                console.log(savedBill);
+                            }
+                        })  
+                    }
+                })
+            })
+          }
+      });
+
+    
     
 })
 

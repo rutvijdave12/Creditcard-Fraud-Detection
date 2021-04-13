@@ -259,7 +259,7 @@ section {
 }
 .sign-in{
   font-family: 'Harry Potter', sans-serif;
-                                                
+  /* padding: 20px;                                                */
   width: 135px;
   height: 45px;
   border-radius: 50px;
@@ -272,6 +272,25 @@ section {
   background-color:black;
   font-weight:700;
   letter-spacing:2px;
+}
+.sign-in_1{
+  font-family: 'Harry Potter', sans-serif;
+  /* padding: 20px;                                                */
+  width: 135px;
+  height: 60px;
+  /* border-radius: 50px; */
+  margin-left:10px;
+  outline: none;
+  margin: 10px;
+  border: none;
+  font-size:1.1rem;
+  color:#efdc97;
+  background-color:black;
+  font-weight:700;
+  letter-spacing:2px;
+}
+.sign-in_1 span{
+  /* padding: 30px; */
 }
 
 .sign-up{
@@ -293,12 +312,41 @@ section {
  
   
 }
+.sign-up_1{
+  font-family: 'Harry Potter', sans-serif;
+                                                
+  width: 150px;
+  height: 60px;
+  /* border-radius: 50px; */
+  margin-left:10px;
+  outline: none;
+  margin: 10px;
+  border: none;
+  font-size:1.1rem;
+  color:#efdc97;
+  background-color:black;
+  font-weight:700;
+  letter-spacing:2px;
+
+ 
+  
+}
 .sign-in:hover{
   transform: scale(1.2);
   transition: all;
   transition-duration: 0.5s;
 }
 .sign-up:hover{
+  transform: scale(1.2);
+  transition: all;
+  transition-duration: 0.5s;
+}
+.sign-in_1:hover{
+  transform: scale(1.2);
+  transition: all;
+  transition-duration: 0.5s;
+}
+.sign-up_1:hover{
   transform: scale(1.2);
   transition: all;
   transition-duration: 0.5s;

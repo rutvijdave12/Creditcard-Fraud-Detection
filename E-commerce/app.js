@@ -271,7 +271,7 @@ app.post('/:id/bill/checkout/pay', isLoggedIn, (req, res) => {
         headers: { 'Content-Type': 'application/json' }
     }).then(res => res.json())
       .then(response => {
-          if(response.statusCode === 200){
+          if(response.statusCode === "I00001"){
               console.log("in")
               Bookbuy.find({buyer: req.user._id}, function(err, foundBills){
                   console.log(foundBills);

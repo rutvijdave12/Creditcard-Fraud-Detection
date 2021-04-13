@@ -467,7 +467,7 @@ def remote_transaction(key):
         if(not developer):
             raise Exception
     except:
-        return "API Key is Invalid"
+        return {"statusCode": "E00007", "message": "API key is invalid"}
     else:
         req_data = request.get_json()
         print(req_data)
@@ -478,31 +478,20 @@ def remote_transaction(key):
         amount = int(req_data["amount"])
         description = req_data["description"]
         merchant_account_no = req_data["merchant_account_no"]
-        print("merchant")
         try:
             # Check if merchant's account exists
             merchant_bank_account = BankAccount.query.filter_by(account_no=merchant_account_no).first()
-            print(1)
             if(merchant_bank_account):
                 credit_card = CreditCard.query.filter_by(cc_no=cc_no).first()
-                print(2)
-                print(credit_card)
-                print(33)
-                print(credit_card.cvv)
-                print(333)
                 # check if the cc_no exists
                 try:
-                    print(credit_card)
                     if(credit_card and credit_card.cvv == cvv):
-                        print(3)
                         try:
                             # check if cc has expired
                             if(date.today() <= credit_card.expiry_date):
-                                print(4)
                                 try:
                                     # check if amount exceeds cc limit
                                     if(amount <= credit_card.amount_limit):
-                                        print(5)
                                         # set transaction time, due date, transaction_id, amount and payment_status
                                         transaction_time = datetime.now()
                                         due_date = date.today() + relativedelta(months=+1)
@@ -526,7 +515,7 @@ def remote_transaction(key):
                                             db.session.commit()
                                         except Exception as e:
                                             print(e)
-                                            return "Something went wrong"
+                                            return {"statusCode": "E00049", "message": "The transaction was unsuccessful"}
                                         # Reduce customer's cc limit
                                         credit_card.amount_limit -= amount
                                         db.session.commit()
@@ -541,33 +530,29 @@ def remote_transaction(key):
                                             db.session.add(account_transaction)
                                             db.session.commit()
                                         except:
-                                            return "Something went wrong"
+                                            print(e)
+                                            return {"statusCode": "E00049", "message": "The transaction was unsuccessful"}
                                         # Now update merchant's bank_account balance
                                         merchant_bank_account.balance += amount
                                         db.session.commit()
                                     else:
                                         return "Your Purchase amount exceeds your creditcard limit"
-                                except Exception as e:
-                                    print(e)
-                                    return "Something went wrong"
+                                except:
+                                    return {"statusCode": "E00027", "message": "The transaction was unsuccessful"}
                             else:
                                 raise Exception
                         except:
-                            return "Creditcard has expired"
+                            return {"statusCode": "E00023", "message": "Creditcard expired"}
                     else:
                         print("exception")
                         raise Exception
                 except:
-                    print("failed")
-                    return {"statusCode": 502, "message": "Bad Gateway"}
+                    return {"statusCode": "E00007", "message": "Invalid authentication values"}
             else:
                 raise Exception
         except:
-            print("failed")
-            return {"statusCode": 502, "message": "Bad Gateway"}
-    print(description)
-    print("success")
-    return {"statusCode": 200, "message": "Payment Successful"}
+            return {"statusCode": "E00008", "message": "Merchant is not currently active"}
+    return {"statusCode": "I00001", "message": "Payment Successful"}
 
 
 

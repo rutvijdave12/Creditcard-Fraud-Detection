@@ -1,11 +1,12 @@
-const express               = require('express');
-      passport              = require('passport');
-      app                   = express();
-      bodyParser            = require('body-parser');
-      mongoose              = require('mongoose');
-      session               = require('express-session');
-      LocalStrategy         = require("passport-local"),
-      passportLocalMongoose = require('passport-local-mongoose');
+const express               = require('express'),
+      passport              = require('passport'),
+      app                   = express(),
+      bodyParser            = require('body-parser'),
+      mongoose              = require('mongoose'),
+      session               = require('express-session'),
+      LocalStrategy         = require('passport-local'),
+      passportLocalMongoose = require('passport-local-mongoose'),
+      bcrypt                = require('bcrypt');
 //  multer=require('multer');
 
 
@@ -142,9 +143,7 @@ app.get('/:id', isLoggedIn, (req, res) => {
 
     Book.findById(req.params.id, (err, foundBook) => {
         if (err) {
-            console.log("9");
             console.log(err);
-            console.log("10");
         } else {
             res.render('info', { book: foundBook });
         }

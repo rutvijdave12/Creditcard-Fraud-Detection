@@ -5,8 +5,8 @@ const express               = require('express'),
       mongoose              = require('mongoose'),
       session               = require('express-session'),
       LocalStrategy         = require('passport-local'),
-      passportLocalMongoose = require('passport-local-mongoose'),
-      bcrypt                = require('bcrypt');
+      passportLocalMongoose = require('passport-local-mongoose');
+    //   bcrypt                = require('bcrypt');
 //  multer=require('multer');
 
 
@@ -86,7 +86,9 @@ app.use(function (req, res, next) {
 app.get('/', (req, res) => {
     const book = Book.find({}, (err, allBooks) => {
         if (err) {
+            console.log("1")
             console.log(err);
+            console.log("1")
         } else {
             res.render('index', { books: allBooks });
         }
@@ -105,6 +107,7 @@ app.post("/sign-in", isNotLoggedIn, passport.authenticate("local",
         failureRedirect: "/sign-in",
         badRequestMessage: 'Missing username or password.',
     }), function(req, res){
+        console.log("2")
         console.log("in")
 });
 
@@ -123,15 +126,23 @@ app.post('/sign-up', (req, res) => {
     User.register({ username: req.body.username, email: req.body.email }, req.body.password, function (err, user) {
 
         if (err) {
+            console.log("3")
             console.log(err)
             res.redirect("/sign-up");
         } else {
-
-            passport.authenticate("local", { session: true })(req, res, function () {
-                res.redirect("/");
-
+            if(req.body.password === req.body.vpassword){
+                passport.authenticate("local", { session: true })(req, res, function () {
+                    res.redirect("/");
             })
         }
+        else{
+                console.log("Verifying Password and Password is not Same !");
+                
+            }
+        
+
+            }
+        
 
     })
 
@@ -143,11 +154,14 @@ app.get('/:id', isLoggedIn, (req, res) => {
 
     Book.findById(req.params.id, (err, foundBook) => {
         if (err) {
-            console.log(err);
+            // console.log("4")
+            // console.log(err);
         } else {
             res.render('info', { book: foundBook });
         }
     })
+
+    
 
 })
 

@@ -121,7 +121,7 @@ section {
   background-image: url('https://kids.scholastic.com/content/dam/scholastic/kids/header/harry-potter/harry-potter_header11.jpg');
   background-repeat:no-repeat;
   background-size:cover;
-  height: 660px;
+  height: 100vh;
   width: 100%;
 
 }
@@ -299,7 +299,7 @@ section {
   padding: 10px 20px;                                              
   width: 150px;
   height: 60px;
-  /* border-radius: 50px; */
+  border-radius: 50px;
   margin-left:10px;
   outline: none;
   margin: 10px;
@@ -318,7 +318,7 @@ section {
   padding: 10px 20px;                                               
   width: 135px;
   height: 60px;
-  /* border-radius: 50px; */
+  border-radius: 50px;
   margin-left:10px;
   outline: none;
   margin: 10px;

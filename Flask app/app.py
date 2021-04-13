@@ -75,7 +75,7 @@ user_schema = UserSchema()
 class BankAccount(db.Model):
     __tablename__ = "bank_account"
     id = db.Column(db.Integer, primary_key=True)
-    account_no = db.Column(db.BigInteger, nullable=False, unique=True)
+    account_no = db.Column(db.String(20), nullable=False, unique=True)
     account_type = db.Column(db.String(50), nullable=False)
     balance = db.Column(db.Integer, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
@@ -102,8 +102,8 @@ bank_accounts_schema = BankAccountSchema(many=True)
 class CreditCard(db.Model):
     __tablename__ = "credit_card"
     id = db.Column(db.Integer, primary_key=True)
-    cc_no = db.Column(db.BigInteger, nullable=False, unique=True)
-    cvv = db.Column(db.Integer, nullable=False)
+    cc_no = db.Column(db.String(20), nullable=False, unique=True)
+    cvv = db.Column(db.String(4), nullable=False)
     expiry_date = db.Column(db.Date, nullable=False)
     amount_limit = db.Column(db.Integer, nullable=False)
     bank_account_id = db.Column(db.Integer, db.ForeignKey('bank_account.id'), nullable=False)
@@ -360,7 +360,7 @@ def accounts(username):
             db.session.commit()
             # generate account_no
             while(True):
-                account_no = random_with_N_digits(14)
+                account_no = str(random_with_N_digits(14))
                 if (not BankAccount.query.filter_by(account_no=account_no).all()):
                     break
             # add details into the BankAccount model
@@ -372,11 +372,11 @@ def accounts(username):
 
             # generate cc num
             while(True):
-                cc_no = random_with_N_digits(16)
+                cc_no = str(random_with_N_digits(16))
                 if (not CreditCard.query.filter_by(cc_no=cc_no).all()):
                     break
             # generate cvv
-            cvv = random_with_N_digits(3)
+            cvv = str(random_with_N_digits(3))
             # generate expiry date
             today = date.today()
             expiry_date = today.replace(today.year+3)
@@ -470,27 +470,37 @@ def remote_transaction(key):
         return "API Key is Invalid"
     else:
         req_data = request.get_json()
+        print(req_data)
         cc_no = req_data["cc_no"]
         cvv = req_data["cvv"]
         expiry = req_data["expiry"]
         expiry_date = date(int(expiry.split("-")[0]), int(expiry.split("-")[1]), int(expiry.split("-")[2]))
-        amount = req_data["amount"]
+        amount = int(req_data["amount"])
         description = req_data["description"]
         merchant_account_no = req_data["merchant_account_no"]
+        print("merchant")
         try:
             # Check if merchant's account exists
             merchant_bank_account = BankAccount.query.filter_by(account_no=merchant_account_no).first()
+            print(1)
             if(merchant_bank_account):
                 credit_card = CreditCard.query.filter_by(cc_no=cc_no).first()
+                print(2)
+                print(credit_card)
+                print(credit_card.cvv)
                 # check if the cc_no exists
                 try:
+                    print(credit_card)
                     if(credit_card and credit_card.cvv == cvv):
+                        print(3)
                         try:
                             # check if cc has expired
                             if(date.today() <= credit_card.expiry_date):
+                                print(4)
                                 try:
                                     # check if amount exceeds cc limit
                                     if(amount <= credit_card.amount_limit):
+                                        print(5)
                                         # set transaction time, due date, transaction_id, amount and payment_status
                                         transaction_time = datetime.now()
                                         due_date = date.today() + relativedelta(months=+1)

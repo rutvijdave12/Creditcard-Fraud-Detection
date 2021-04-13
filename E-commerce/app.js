@@ -5,7 +5,8 @@ const express               = require('express'),
       mongoose              = require('mongoose'),
       session               = require('express-session'),
       LocalStrategy         = require('passport-local'),
-      passportLocalMongoose = require('passport-local-mongoose');
+      passportLocalMongoose = require('passport-local-mongoose'),
+      fetch                 = require('node-fetch');
     //   bcrypt                = require('bcrypt');
 //  multer=require('multer');
 
@@ -57,6 +58,10 @@ const billSchema = new mongoose.Schema({
     book: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Book"
+    },
+    buyer: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
     }
 })
 
@@ -155,7 +160,7 @@ app.get('/:id', isLoggedIn, (req, res) => {
     Book.findById(req.params.id, (err, foundBook) => {
         if (err) {
             // console.log("4")
-            // console.log(err);
+            console.log(err);
         } else {
             res.render('info', { book: foundBook });
         }
@@ -172,9 +177,7 @@ app.get('/:id', isLoggedIn, (req, res) => {
 app.get('/:id/bill', isLoggedIn, (req, res) => {
     Book.findById(req.params.id, (err, foundBook) => {
         if (err) {
-            console.log("13");
             console.log(err);
-            console.log("14");
         } else {
             res.render('bill', { book: foundBook });
         }
@@ -192,15 +195,13 @@ app.post('/:id/bill', isLoggedIn, (req, res) => {
         country: req.body.country,
         city: req.body.city,
         book: req.params.id,
-        cost: 20
-
+        cost: 1000,
+        buyer: req.user._id
     });
 
     userBill.save(function (err, savedBill) {
         if (err) {
-            console.log("15")
             console.log(err)
-            console.log("16")
         } else {
             res.redirect("/" + savedBill._id + "/bill/checkout");
         }
@@ -212,11 +213,8 @@ app.get('/:id/bill/checkout', isLoggedIn, (req, res) => {
 
     Bookbuy.findById(req.params.id).populate("book").exec(function (err, foundBill) {
         if (err) {
-            console.log("17");
             console.log(err)
-            console.log("18");
         } else {
-            // console.log(foundBill);
             res.render('checkout', { bill: foundBill });
         }
     })
@@ -228,15 +226,32 @@ app.get('/:id/bill/checkout/pay', isLoggedIn, (req, res) => {
 
     Bookbuy.findById(req.params.id).populate("book").exec((err, foundBill) => {
         if (err) {
-            console.log("19");
             console.log(err)
-            console.log("20");
         } else {
             res.render('pay', { bill: foundBill });
         }
 
     })
 
+});
+
+app.post('/:id/bill/checkout/pay', isLoggedIn, (req, res) => {
+    let body = {
+        cc_no: req.body.cc_no,
+        cvv: req.body.cvv,
+        expiry: req.body.expiryDate,
+        amount: req.body.amount,
+        description: req.body.description,
+        merchant_account_no: "10408354198656"
+    };
+    
+    fetch('http://127.0.0.1:5000/1VPRNOIY3X4VUOYVSISJ1R2GX8WO7GRBIXH8BEEHORT620DLNT/remote_transaction', {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: { 'Content-Type': 'application/json' }
+    }).then(res => res.json())
+      .then(json => console.log(json));
+    
 })
 
 

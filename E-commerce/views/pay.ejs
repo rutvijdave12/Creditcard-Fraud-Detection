@@ -12,44 +12,53 @@
 	<div class="container">
 		
 		<div class="login-content">
-			<form action="/pay" method="POST" class="pay_form">
+			<form action="/<%=bill.book._id%>/bill/checkout/pay" method="POST" class="pay_form">
 				<h2 class="title">Payment</h2>
-           		<div class="input-div one">
-           		   <div class="i">
-           		   		<i class="fa fa-credit-card" style="color: black;"></i>
-           		   </div>
-           		   <div class="div">
-           		   		<h5 style="color: black;">Credit Card Number</h5>
-           		   		<input type="text" class="input">
-           		   </div>
-           		</div>
-                   <div class="input-div one">
-                    <div class="i">
-                            <i class="fa fa-credit-card" style="color: black;"></i>
-                    </div>
-                    <div class="div">
-                            <h5 style="color: black;">CVV</h5>
-                            <input type="text" class="input">
-                    </div>
-                 </div>
-                 <div class="input-div one">
-                    <div class="i">
-                            <i class="fa fa-dollar" style="color: black;"></i>
-                    </div>
-                    <div class="div">
-                            <!-- <h5>Amount</h5> -->
-                            <input type="text" class="input" value=" <%= bill.cost %>" disabled>
-                    </div>
-                 </div>
-                 <div class="input-div one">
-                    <div class="i">
-                            <i class="fas fa-book" style="color: black;"></i>
-                    </div>
-                    <div class="div">
-                            <!-- <h5>Description</h5> -->
-                            <input type="text" class="input" value="<%= bill.book.bookname %>" disabled>
-                    </div>
-                 </div>
+                                <div class="input-div one">
+                                        <div class="i">
+                                                        <i class="fa fa-credit-card" style="color: black;"></i>
+                                        </div>
+                                        <div class="div">
+                                                        <h5 style="color: black;">Credit Card Number</h5>
+                                                        <input type="text" class="input" name="cc_no">
+                                        </div>
+                                </div>
+                                <div class="input-div one">
+                                        <div class="i">
+                                                <i class="fa fa-credit-card" style="color: black;"></i>
+                                        </div>
+                                        <div class="div">
+                                                <h5 style="color: black;">CVV</h5>
+                                                <input type="text" class="input" name="cvv">
+                                        </div>
+                                </div>
+                                <div class="input-div one">
+                                        <div class="i">
+                                                <i class="fa fa-credit-card" style="color: black;"></i>
+                                        </div>
+                                        <div class="div">
+                                                <h5 style="color: black;">Expiry Date</h5>
+                                                <input type="date" class="input" name="expiryDate">
+                                        </div>
+                                </div>
+                                <div class="input-div one">
+                                        <div class="i">
+                                                <i class="fa fa-dollar" style="color: black;"></i>
+                                        </div>
+                                        <div class="div">
+                                                <!-- <h5>Amount</h5> -->
+                                                <input type="text" class="input" name="amount" value=" <%= bill.cost %>" readonly>
+                                        </div>
+                                </div>
+                                <div class="input-div one">
+                                        <div class="i">
+                                                <i class="fas fa-book" style="color: black;"></i>
+                                        </div>
+                                        <div class="div">
+                                                <!-- <h5>Description</h5> -->
+                                                <input type="text" class="input" name="description" value="<%= bill.book.bookname %>" readonly>
+                                        </div>
+                                </div>
            	
             	
             	<input type="submit" class="btn" value="Pay">

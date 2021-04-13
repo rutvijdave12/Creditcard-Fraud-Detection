@@ -75,7 +75,7 @@ user_schema = UserSchema()
 class BankAccount(db.Model):
     __tablename__ = "bank_account"
     id = db.Column(db.Integer, primary_key=True)
-    account_no = db.Column(db.BigInteger, nullable=False, unique=True)
+    account_no = db.Column(db.String(20), nullable=False, unique=True)
     account_type = db.Column(db.String(50), nullable=False)
     balance = db.Column(db.Integer, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
@@ -102,8 +102,8 @@ bank_accounts_schema = BankAccountSchema(many=True)
 class CreditCard(db.Model):
     __tablename__ = "credit_card"
     id = db.Column(db.Integer, primary_key=True)
-    cc_no = db.Column(db.BigInteger, nullable=False, unique=True)
-    cvv = db.Column(db.Integer, nullable=False)
+    cc_no = db.Column(db.String(20), nullable=False, unique=True)
+    cvv = db.Column(db.String(4), nullable=False)
     expiry_date = db.Column(db.Date, nullable=False)
     amount_limit = db.Column(db.Integer, nullable=False)
     bank_account_id = db.Column(db.Integer, db.ForeignKey('bank_account.id'), nullable=False)
@@ -360,7 +360,7 @@ def accounts(username):
             db.session.commit()
             # generate account_no
             while(True):
-                account_no = random_with_N_digits(14)
+                account_no = str(random_with_N_digits(14))
                 if (not BankAccount.query.filter_by(account_no=account_no).all()):
                     break
             # add details into the BankAccount model
@@ -372,11 +372,11 @@ def accounts(username):
 
             # generate cc num
             while(True):
-                cc_no = random_with_N_digits(16)
+                cc_no = str(random_with_N_digits(16))
                 if (not CreditCard.query.filter_by(cc_no=cc_no).all()):
                     break
             # generate cvv
-            cvv = random_with_N_digits(3)
+            cvv = str(random_with_N_digits(3))
             # generate expiry date
             today = date.today()
             expiry_date = today.replace(today.year+3)
@@ -467,14 +467,15 @@ def remote_transaction(key):
         if(not developer):
             raise Exception
     except:
-        return "API Key is Invalid"
+        return {"statusCode": "E00007", "message": "API key is invalid"}
     else:
         req_data = request.get_json()
+        print(req_data)
         cc_no = req_data["cc_no"]
         cvv = req_data["cvv"]
         expiry = req_data["expiry"]
         expiry_date = date(int(expiry.split("-")[0]), int(expiry.split("-")[1]), int(expiry.split("-")[2]))
-        amount = req_data["amount"]
+        amount = int(req_data["amount"])
         description = req_data["description"]
         merchant_account_no = req_data["merchant_account_no"]
         try:
@@ -514,7 +515,7 @@ def remote_transaction(key):
                                             db.session.commit()
                                         except Exception as e:
                                             print(e)
-                                            return "Something went wrong"
+                                            return {"statusCode": "E00049", "message": "The transaction was unsuccessful"}
                                         # Reduce customer's cc limit
                                         credit_card.amount_limit -= amount
                                         db.session.commit()
@@ -529,29 +530,29 @@ def remote_transaction(key):
                                             db.session.add(account_transaction)
                                             db.session.commit()
                                         except:
-                                            return "Something went wrong"
+                                            print(e)
+                                            return {"statusCode": "E00049", "message": "The transaction was unsuccessful"}
                                         # Now update merchant's bank_account balance
                                         merchant_bank_account.balance += amount
                                         db.session.commit()
                                     else:
                                         return "Your Purchase amount exceeds your creditcard limit"
-                                except Exception as e:
-                                    print(e)
-                                    return "Something went wrong"
+                                except:
+                                    return {"statusCode": "E00027", "message": "The transaction was unsuccessful"}
                             else:
                                 raise Exception
                         except:
-                            return "Creditcard has expired"
+                            return {"statusCode": "E00023", "message": "Creditcard expired"}
                     else:
+                        print("exception")
                         raise Exception
                 except:
-                    return "Creditcard is Invalid"
+                    return {"statusCode": "E00007", "message": "Invalid authentication values"}
             else:
                 raise Exception
         except:
-            return "Transaction couldn't happen"
-    print(description)
-    return {"successCode": 200, "message": "Payment Successful"}
+            return {"statusCode": "E00008", "message": "Merchant is not currently active"}
+    return {"statusCode": "I00001", "message": "Payment Successful"}
 
 
 

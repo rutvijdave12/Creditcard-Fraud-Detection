@@ -43,30 +43,36 @@
            		   </div>
            		   <div class="div">
            		    	<h5>Password</h5>
-           		    	<input type="password" class="input" name="password" required>
+           		    	<input type="password" class="input" name="password" id="txtPassword" required>
             	   </div>
             	</div>
-				<!-- <div class="input-div pass">
+				<div class="input-div pass">
 					<div class="i"> 
 						 <i class="fas fa-lock"></i>
 					</div>
 					<div class="div">
 						 <h5>Verify Password</h5>
-						 <input type="password" class="input" required>
+						 <input type="password" class="input" name="vpassword" id="txtConfirmPassword" required>
 				 </div>
-			  </div> -->
+			  </div>
+			  <h5 id="giveValid" style="text-align: left; color: brown; "> </h5>
 		
-			  <!-- <p><input type="file"  accept="image/*" name="image" id="file"  onchange="loadFile(event)" style="display: none;" required></p>
-    <p><label for="file" style="cursor: pointer;" class="input image_input">Upload Your Image</label> <div class="tooltip"> <i class="fa">&#xf05a;</i>
-	<span class="tooltiptext">Upload Your Image</span>
-  </div></p> -->
-
-<!-- <p><img id="output" width="150" height="200" /></p> -->
 			  <br>
-            	<input type="submit" class="btn" value="Sign-Up">
+            	<input type="submit" class="btn" value="Sign-Up" onclick="return Validate()">
             </form>
         </div>
     </div>
     <script type="text/javascript" src="js/sign-up.js"></script>
+	<script>
+		function Validate() {
+        var password = document.getElementById("txtPassword").value;
+        var confirmPassword = document.getElementById("txtConfirmPassword").value;
+        if (password != confirmPassword) {
+            document.getElementById("giveValid").innerHTML = "Password and Verfiy Password are to be same ";
+            return false;
+        }
+        return true;
+    }
+	</script>
 </body>
 </html>

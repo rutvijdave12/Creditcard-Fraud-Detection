@@ -343,3 +343,53 @@ section {
 header{
   padding: 45px !important;
 }
+/* .fa-facebook {
+  background: #3B5998;
+  color: white;
+}
+
+.fa-twitter {
+  background: #55ACEE;
+  color: white;
+}
+
+.fa-google {
+  background: #dd4b39;
+  color: white;
+}
+footer{
+  c
+}
+.col1{
+  font-family: 'Harry Potter', sans-serif;
+letter-spacing: 3px;
+  background-color:black;
+  color:white;
+}
+.column {
+  float: left;
+  width: 50%;
+  padding: 10px;
+  height: 200px; 
+} */
+
+/* Clear floats after the columns */
+/* .row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+.col2{
+  text-align: right;
+  
+}
+.fa {
+  padding: 15px;
+  font-size: 20px;
+  width: 50px;
+  height: 50px;
+  text-align: center;
+  text-decoration: none;
+  margin: 5px 2px;
+  border-radius: 50%;
+} */

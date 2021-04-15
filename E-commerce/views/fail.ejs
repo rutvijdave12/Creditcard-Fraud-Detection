@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=h1, initial-scale=1.0">
+    <link href="http://fonts.cdnfonts.com/css/harry-potter" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>Document</title>
+   <link rel="stylesheet" href="/css/fail.css">
+</head>
+<body>
+    <div class="spell-text">
+   
+        <ul class="spell-tags">
+       
+          <li class="sl">Slytherin</li>
+          
+        </ul>
+      </div>
+      <div id="potter-animation"></div>
+      <div class="container " id="fade-in-image">
+        <h1>PAYMENT FAILED <i class="fa fa-money"></i></h1><br>
+        <h2>Problem Occured</h2>
+        <h4>Error </h4>
+        <a href="/"><button class="gotoindex">Go To Index Page</button></a>
+      </div>
+      
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/4.7.1/bodymovin.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+     <script>
+          var spellAnimation = bodymovin.loadAnimation({
+  container: document.getElementById('potter-animation'),
+  renderer: 'svg',
+  loop: false,
+  autoplay: false,
+  path: 'https://raw.githubusercontent.com/abrahamrkj/facebook-spell/master/data.json'
+})
+
+$(".spell-tags li").click(function() { 
+  spellAnimation.stop();
+  spellAnimation.play();
+});
+
+$(document).ready(function(){
+  spellAnimation.play();
+//   $("#fade-in-image").fadeIn("3000");
+  $("#fade-in-image").hide(0).delay(500).fadeIn(3000)
+})
+      </script>
+</body>
+</html>

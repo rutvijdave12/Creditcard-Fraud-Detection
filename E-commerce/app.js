@@ -115,7 +115,13 @@ app.get('/', (req, res) => {
 app.get('/sign-in', (req, res) => {
     res.render('sign-in');
 })
+app.get("/success",isLoggedIn,(req,res)=>{
+    res.render("success");
+})
 
+app.get("/fail",isLoggedIn,(req,res)=>{
+    res.render("fail");
+})
 app.post("/sign-in", isNotLoggedIn, passport.authenticate("local",
     {
         successRedirect: "/",
@@ -170,7 +176,7 @@ app.get('/:id', isLoggedIn, (req, res) => {
     Book.findById(req.params.id, (err, foundBook) => {
         if (err) {
             // console.log("4")
-            console.log(err);
+            // console.log(err);
         } else {
             res.render('info', { book: foundBook });
         }
@@ -284,6 +290,7 @@ app.post('/:id/bill/checkout/pay', isLoggedIn, (req, res) => {
                               }
                               else{
                                   console.log(savedBill);
+                                  res.redirect("/success");
                               }
                           })  
                       }
@@ -301,6 +308,7 @@ app.post('/:id/bill/checkout/pay', isLoggedIn, (req, res) => {
                             }
                             else{
                                 console.log(savedBill);
+                                res.redirect("/fail",{status:response.statusCode});
                             }
                         })  
                     }

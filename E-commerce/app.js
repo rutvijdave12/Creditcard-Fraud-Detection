@@ -308,7 +308,9 @@ app.post('/:id/bill/checkout/pay', isLoggedIn, (req, res) => {
                             }
                             else{
                                 console.log(savedBill);
+                                // Check all the errors
                                 res.redirect("/fail",{status:response.statusCode});
+                                // if error E00050 then photo
                             }
                         })  
                     }

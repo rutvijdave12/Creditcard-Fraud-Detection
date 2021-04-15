@@ -262,10 +262,10 @@ app.post('/:id/bill/checkout/pay', isLoggedIn, (req, res) => {
         expiry: req.body.expiryDate,
         amount: req.body.amount,
         description: req.body.description,
-        merchant_account_no: "10408354198656"
+        merchant_account_no: "87944526076700"
     };
     
-    fetch('http://127.0.0.1:5000/1VPRNOIY3X4VUOYVSISJ1R2GX8WO7GRBIXH8BEEHORT620DLNT/remote_transaction', {
+    fetch('http://127.0.0.1:5000/G7RUTMM0BAGPS0529MF53XAXA0TFZH49HE9X9SULXK9WC5ZPU0/remote_transaction', {
         method: 'POST',
         body: JSON.stringify(body),
         headers: { 'Content-Type': 'application/json' }

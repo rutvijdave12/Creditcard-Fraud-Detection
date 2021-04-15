@@ -3737,3 +3737,31 @@ div.show-page{
   font-size: 2rem;
   font-weight: 500;
 }
+
+
+/* =====================================
+Photo page
+======================================== */
+
+
+.photo-container{
+  background: url(../img/hero-bg.png) top center no-repeat;
+  height: 100vh;
+}
+
+.photo-container .row{
+  height: 25rem;
+}
+
+.photo-container .col-8{
+  height: 80%;
+}
+
+.photo-container #camera{
+  width: 80% !important;
+  height: 100% !important;
+}
+
+.hide{
+  display:none;
+}

@@ -14,6 +14,11 @@ from dateutil.relativedelta import relativedelta
 import string
 import pickle
 import sklearn
+import cloudinary as cloud
+import cloudinary.uploader
+from dotenv import load_dotenv
+load_dotenv()
+
 
 
 
@@ -23,9 +28,20 @@ import sklearn
 app = Flask(__name__,template_folder='templates',static_folder = 'static')
 app.config["SECRET_KEY"] = "secret123"
 
+Upload = 'static/upload'
+app.config['uploadFolder'] = Upload
+
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 model = pickle.load(open("Model/fraud_self.pkl", 'rb'))
+
+
+# Cloudinary configuration
+cloud.config.update = ({
+    'cloud_name':os.environ.get('CLOUDINARY_CLOUD_NAME'),
+    'api_key': os.environ.get('CLOUDINARY_API_KEY'),
+    'api_secret': os.environ.get('CLOUDINARY_API_SECRET')
+})
 
 
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+'cc.sqlite'
@@ -41,6 +57,9 @@ db = SQLAlchemy(app)
 # Init ma
 ma = Marshmallow(app)
 
+# cached variable
+global cachedVariable
+
 # User Class/Model
 class User(db.Model):
     __tablename__ = "user"
@@ -51,6 +70,7 @@ class User(db.Model):
     address = db.Column(db.String(255))
     contact_no = db.Column(db.String(10))
     password = db.Column(db.String(200), nullable=False)
+    photo_link = db.Column(db.Text)
     bank_accounts = db.relationship('BankAccount', backref='user')
 
     # def __init__(self, full_name, username, email):
@@ -304,6 +324,31 @@ def register():
             return redirect(url_for("login"))
     return render_template("register.html", form=form)
 
+# photo route
+@app.route("/<string:username>/photo", methods=['GET', 'POST'])
+@is_logged_in
+def photo(username):
+    user = User.query.filter_by(username=username).first() 
+    if request.method == "POST":
+        try:
+            img_file = request.files['webcam']
+            link = cloud.uploader.upload(img_file)
+            print(link)
+            # set photo link in the users
+            user.photo_link = link['secure_url']
+            # commit
+            db.session.commit()
+        except Exception as e:
+            print(e)
+            flash("Photograph Couldn't be taken, Try again", "error")
+            return redirect("/"+ username + "/photo")
+        print("done")
+        flash("You are now logged in", "success")
+        return redirect("/"+ username + "/accounts")
+        # file.save(os.path.join(app.config['uploadFolder'], file.filename))
+
+    return render_template("photo.html", user=user)
+
 # Login
 @app.route("/login", methods=["GET", "POST"])
 @is_not_logged_in
@@ -319,8 +364,12 @@ def login():
                     if(sha256_crypt.verify(password, user.password)):
                         session['logged_in'] = True
                         session["username"] = username
-                        flash("You are now logged in", "success")
-                        return redirect("/"+ username + "/accounts")
+                        print(user.photo_link)
+                        if (user.photo_link == None):
+                            return redirect("/"+ username + "/photo")
+                        else:
+                            flash("You are now logged in", "success")
+                            return redirect("/"+ username + "/accounts")
                     else:
                         print("inner exception")
                         raise Exception
@@ -506,7 +555,8 @@ def remote_transaction(key):
                                         minute = str(transaction_time.strftime("%M"))
                                         # Check from the ml model
                                         prediction = model.predict([[amount, day, month, year, hour, minute]])
-                                        print(prediction[0])
+                                        if prediction[0]:
+                                            return {"statusCode": "E00050", "message": "The transaction was suspicious"}                                            
                                         payment_status = "pending"
                                         credit_card_statement = CreditCardStatement(transaction_time=transaction_time, due_date=due_date, transaction_id=transaction_id, amount=amount, payment_status=payment_status, credit_card=credit_card)
                                         # Add the transaction to customer's credit_card_statement

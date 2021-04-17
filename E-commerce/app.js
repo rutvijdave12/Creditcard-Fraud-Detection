@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const express               = require('express'),
       passport              = require('passport'),
       app                   = express(),
@@ -6,7 +8,8 @@ const express               = require('express'),
       session               = require('express-session'),
       LocalStrategy         = require('passport-local'),
       passportLocalMongoose = require('passport-local-mongoose'),
-      fetch                 = require('node-fetch');
+      fetch                 = require('node-fetch'),
+      path                  = require('path');
     //   bcrypt                = require('bcrypt');
 //  multer=require('multer');
 
@@ -14,6 +17,39 @@ const express               = require('express'),
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(__dirname + '/public'));
+
+// below code is for image uploading feature
+// A multer storage engine for Cloudinary. Also consult the Cloudinary API.
+var multer = require('multer');
+
+var storage = multer.diskStorage({
+    destination: "./image/upload/",
+    filename: function(req, file, callback) {
+        callback(null, file.fieldname + Date.now() + path.extname(file.originalname));
+    }
+});
+
+var imageFilter = function (req, file, cb) {
+    // accept image files only
+    if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/i)) {
+        return cb(new Error('Only image files are allowed!'), false);
+    }
+    cb(null, true);
+};
+
+var upload = multer({ storage: storage}).single("webcam");
+
+// cloudinary is the service we are going to use for image upload
+var cloudinary = require('cloudinary');
+
+cloudinary.config({ 
+  cloud_name: 'userphotos', 
+  api_key: process.env.CLOUDINARY_API_KEY, 
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
+
+
 
 
 
@@ -34,7 +70,8 @@ const userSchema = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: "Bookbuy"
         }
-    ]
+    ],
+    userImg: String
 
 });
 
@@ -170,6 +207,32 @@ app.post('/sign-up', (req, res) => {
 
 })
 
+app.get("/photo", isLoggedIn, (req, res) =>{
+    Bookbuy.findOne({buyer: req.user._id, paymentStatus: "pending"}, function(err, savedBill){
+        if (err){
+            console.log(err);
+        }
+        else{
+            res.render("photo", {billId: savedBill._id});
+        }
+    })
+});
+
+app.post('/photo', isLoggedIn,  (req, res) => {
+     upload(req, res, (err) => {
+        if(err){
+            console.log(err);
+        }
+        else{
+            cloudinary.uploader.upload(req.file.path, function(result){
+                req.user.userImg = result.secure_url;
+                req.user.save();
+            });
+        }
+    })
+    
+});
+
 
 app.get('/:id', isLoggedIn, (req, res) => {
 
@@ -246,10 +309,10 @@ app.get('/:id/bill/checkout', isLoggedIn, (req, res) => {
     })
 
 
-})
+});
+
 
 app.get('/:id/bill/checkout/pay', isLoggedIn, (req, res) => {
-
     Bookbuy.findById(req.params.id).populate("book").exec((err, foundBill) => {
         if (err) {
             console.log(err)
@@ -268,7 +331,8 @@ app.post('/:id/bill/checkout/pay', isLoggedIn, (req, res) => {
         expiry: req.body.expiryDate,
         amount: req.body.amount,
         description: req.body.description,
-        merchant_account_no: "87944526076700"
+        merchant_account_no: "87944526076700",
+        customerImg: req.user.userImg
     };
     
     fetch('http://127.0.0.1:5000/G7RUTMM0BAGPS0529MF53XAXA0TFZH49HE9X9SULXK9WC5ZPU0/remote_transaction', {
@@ -276,7 +340,7 @@ app.post('/:id/bill/checkout/pay', isLoggedIn, (req, res) => {
         body: JSON.stringify(body),
         headers: { 'Content-Type': 'application/json' }
     }).then(res => res.json())
-      .then(response => {
+      .then (response => {
           if(response.statusCode === "I00001"){
               console.log("in")
               Bookbuy.find({buyer: req.user._id}, function(err, foundBills){
@@ -309,7 +373,13 @@ app.post('/:id/bill/checkout/pay', isLoggedIn, (req, res) => {
                             else{
                                 console.log(savedBill);
                                 // Check all the errors
-                                res.redirect("/fail",{status:response.statusCode});
+                                if (response.statusCode === "E00050"){
+                                    res.redirect("/photo");
+                                }
+                                else{
+                                    console.log(response.statusCode)
+                                    res.redirect("/fail"); 
+                                }
                                 // if error E00050 then photo
                             }
                         })  
@@ -317,11 +387,11 @@ app.post('/:id/bill/checkout/pay', isLoggedIn, (req, res) => {
                 })
             })
           }
-      });
-
-    
-    
+      });   
 })
+
+
+
 
 
 // Middleware

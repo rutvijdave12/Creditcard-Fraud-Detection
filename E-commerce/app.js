@@ -7,14 +7,16 @@ const express               = require('express'),
       LocalStrategy         = require('passport-local'),
       passportLocalMongoose = require('passport-local-mongoose'),
       fetch                 = require('node-fetch');
+      cloudinary = require('cloudinary').v2;
     //   bcrypt                = require('bcrypt');
 //  multer=require('multer');
+
 
 
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(__dirname + '/public'));
-
+app.use(express.json());
 
 
 mongoose.connect("mongodb://localhost:27017/userDB", { useNewUrlParser: true, useUnifiedTopology: true })
@@ -96,6 +98,12 @@ app.use(function (req, res, next) {
     res.locals.currentUser = req.user;
     next();
 });
+
+cloudinary.config({ 
+    cloud_name: 'dxbi7mov0', 
+    api_key: '941151979664916', 
+    api_secret: 'aWSygb2H2FD2HvgS61_mQw27_eo' 
+  });
 
 
 app.get('/', (req, res) => {
@@ -308,9 +316,13 @@ app.post('/:id/bill/checkout/pay', isLoggedIn, (req, res) => {
                             }
                             else{
                                 console.log(savedBill);
-                                // Check all the errors
-                                res.redirect("/fail",{status:response.statusCode});
-                                // if error E00050 then photo
+                                // res.redirect("/fail");
+                                if(response.statusCode="E00050"){
+                                    res.redirect("/"+bill._id+"photo");
+                                }else{
+                                    res.redirect("/fail");
+                                }
+                               
                             }
                         })  
                     }
@@ -318,6 +330,76 @@ app.post('/:id/bill/checkout/pay', isLoggedIn, (req, res) => {
             })
           }
       });
+
+    
+    
+})
+
+
+app.get("/:id/photo",(req,res)=>{
+    res.render("photo",{bill_id:req.params.id});
+   
+})
+
+app.post("/:id/photo", isLoggedIn, (req, res) => {
+    console.log("OUT");
+    const data=req.body;
+    console.log(data);
+
+    cloudinary.uploader.upload(data.imgUrl, function(error, result) {console.log(result, error)});
+
+    
+    // fetch('http://127.0.0.1:5000/G7RUTMM0BAGPS0529MF53XAXA0TFZH49HE9X9SULXK9WC5ZPU0/remote_transaction', {
+    //     method: 'POST',
+    //     body: JSON.stringify(body),
+    //     headers: { 'Content-Type': 'application/json' }
+    // }).then(res => res.json())
+    //   .then(response => {
+    //       if(response.statusCode === "I00001"){
+    //           console.log("in")
+    //           Bookbuy.find({buyer: req.user._id}, function(err, foundBills){
+    //               console.log(foundBills);
+    //               foundBills.forEach(function(bill){
+    //                   if(bill.paymentStatus === "pending"){
+    //                       bill.paymentStatus = "success";
+    //                       bill.save(function(err, savedBill){
+    //                           if(err){
+    //                               console.log(err);
+    //                           }
+    //                           else{
+    //                               console.log(savedBill);
+    //                               res.redirect("/success");
+    //                           }
+    //                       })  
+    //                   }
+    //               })
+    //           })
+    //       }
+    //       else{
+    //         Bookbuy.find({buyer: req.user._id}, function(err, foundBills){
+    //             foundBills.forEach(function(bill){
+    //                 if(bill.paymentStatus === "pending"){
+    //                     bill.paymentStatus = "failed";
+    //                     bill.save(function(err, savedBill){
+    //                         if(err){
+    //                             console.log(err);
+    //                         }
+    //                         else{
+    //                             console.log(savedBill);
+    //                             // res.redirect("/fail");
+    //                             if(response.statusCode="E00050"){
+    //                                 res.redirect("/"+bill._id+"/photo");
+    //                             }else{
+    //                                 res.redirect("/fail");
+    //                             }
+                               
+    //                         }
+    //                     })  
+    //                 }
+    //             })
+    //         })
+    //       }
+    //   });
 
     
     

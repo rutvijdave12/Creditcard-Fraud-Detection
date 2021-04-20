@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "d98f612e4dcf1e189a09d625e5c7090ee66cfe403b169fe98b6e39d2d0bc20c1"
+            "sha256": "8a4d8f067da78f59fdfabe96ec3c6d421f2de75b8be21eeb972b7b184db126b1"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -321,11 +321,11 @@
         },
         "importlib-metadata": {
             "hashes": [
-                "sha256:2ec0faae539743ae6aaa84b49a169670a465f7f5d64e6add98388cc29fd1f2f6",
-                "sha256:c9356b657de65c53744046fa8f7358afe0714a1af7d570c00c3835c2d724a7c1"
+                "sha256:19192b88d959336bfa6bdaaaef99aeafec179eca19c47c804e555703ee5f07ef",
+                "sha256:2e881981c9748d7282b374b68e759c87745c25427b67ecf0cc67fb6637a1bff9"
             ],
             "markers": "python_version < '3.8'",
-            "version": "==3.10.1"
+            "version": "==4.0.0"
         },
         "itsdangerous": {
             "hashes": [
@@ -925,6 +925,7 @@
                 "sha256:eedcf578afde5e6e69c75d796bed41093451cd1ab54afb438760e40fb74a09de",
                 "sha256:efa9daa4b3701a4e439b24b74c1e4b66844aee8ae5263fb3cc12281ac9cc9f67"
             ],
+            "index": "pypi",
             "version": "==2.4.1"
         },
         "tensorflow-estimator": {

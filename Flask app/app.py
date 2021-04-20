@@ -21,6 +21,7 @@ from deepface import DeepFace
 import requests
 load_dotenv()
 # import tensorflow
+import tensorflow as tf
 
 
 
@@ -36,7 +37,9 @@ app.config['uploadFolder'] = Upload
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-model = pickle.load(open("Model/fraud_self.pkl", 'rb'))
+# model = pickle.load(open("Model/fraud_self.pkl", 'rb'))
+
+model = tf.keras.models.load_model('Model/balance.h5')
 
 
 # Cloudinary configuration
@@ -553,30 +556,26 @@ def remote_transaction(key):
                                             amount = amount
 
                                             # extract transaction date and time
-                                            day = str(transaction_time.strftime("%d"))
-                                            month = str(transaction_time.strftime("%m"))
-                                            year = str(transaction_time.strftime("%Y"))
-                                            hour = str(transaction_time.strftime("%H"))
-                                            minute = str(transaction_time.strftime("%M"))
+                                            day = int(transaction_time.strftime("%d"))
+                                            month = int(transaction_time.strftime("%m"))
+                                            year = int(transaction_time.strftime("%Y"))
+                                            hour = int(transaction_time.strftime("%H"))
+                                            minute = int(transaction_time.strftime("%M"))
                                             # Check from the ml model
                                             prediction = model.predict([[amount, day, month, year, hour, minute]])
-                                            print("true")
-                                            if True:
+                                            if prediction[0]:
                                                 user = User.query.filter_by(username=credit_card.bank_account.user.username).first()
-                                                print(user)
                                                 user_image = req_data["customerImg"]
                                                 user_image_response = requests.get(user_image)
                                                 user_image_file = open("images/uploads/user.jpg", "wb");
                                                 user_image_file.write(user_image_response.content)
                                                 user_image_file.close()
-                                                print("between")
                                                 customer_image = user.photo_link
                                                 customer_image_response = requests.get(customer_image)
                                                 customer_image_file = open("images/uploads/customer.jpeg", "wb");
                                                 customer_image_file.write(customer_image_response.content)
                                                 customer_image_file.close()
                                                 result  = DeepFace.verify("images/uploads/user.jpg", "images/uploads/customer.jpeg")
-                                                print(result, "==========================")
                                                 if not result:
                                                     return {"statusCode": "E00050", "message": "The transaction was suspicious"}                                                 
                                             payment_status = "pending"

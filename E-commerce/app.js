@@ -17,27 +17,7 @@ const express               = require('express'),
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(__dirname + '/public'));
-
-// below code is for image uploading feature
-// A multer storage engine for Cloudinary. Also consult the Cloudinary API.
-var multer = require('multer');
-
-var storage = multer.diskStorage({
-    destination: "./image/upload/",
-    filename: function(req, file, callback) {
-        callback(null, file.fieldname + Date.now() + path.extname(file.originalname));
-    }
-});
-
-var imageFilter = function (req, file, cb) {
-    // accept image files only
-    if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/i)) {
-        return cb(new Error('Only image files are allowed!'), false);
-    }
-    cb(null, true);
-};
-
-var upload = multer({ storage: storage}).single("webcam");
+app.use(express.json());
 
 // cloudinary is the service we are going to use for image upload
 var cloudinary = require('cloudinary');
@@ -207,8 +187,8 @@ app.post('/sign-up', (req, res) => {
 
 })
 
-app.get("/photo", isLoggedIn, (req, res) =>{
-    Bookbuy.findOne({buyer: req.user._id, paymentStatus: "pending"}, function(err, savedBill){
+app.get("/:id/photo", isLoggedIn, (req, res) =>{
+    Bookbuy.findById(req.params.id, function(err, savedBill){
         if (err){
             console.log(err);
         }
@@ -218,18 +198,19 @@ app.get("/photo", isLoggedIn, (req, res) =>{
     })
 });
 
-app.post('/photo', isLoggedIn,  (req, res) => {
-     upload(req, res, (err) => {
-        if(err){
-            console.log(err);
-        }
-        else{
-            cloudinary.uploader.upload(req.file.path, function(result){
+app.post('/:id/photo', isLoggedIn,  (req, res) => {
+     Bookbuy.findById(req.params.id, function(err, foundBill){
+         if (err){
+             console.log(err);
+         }
+         else{
+            cloudinary.uploader.upload(req.body.imgUrl, function(result){
                 req.user.userImg = result.secure_url;
+                console.log(req.user.userImg)
                 req.user.save();
             });
-        }
-    })
+         }
+     })
     
 });
 
@@ -344,7 +325,6 @@ app.post('/:id/bill/checkout/pay', isLoggedIn, (req, res) => {
           if(response.statusCode === "I00001"){
               console.log("in")
               Bookbuy.find({buyer: req.user._id}, function(err, foundBills){
-                  console.log(foundBills);
                   foundBills.forEach(function(bill){
                       if(bill.paymentStatus === "pending"){
                           bill.paymentStatus = "success";
@@ -372,15 +352,7 @@ app.post('/:id/bill/checkout/pay', isLoggedIn, (req, res) => {
                             }
                             else{
                                 console.log(savedBill);
-                                // Check all the errors
-                                if (response.statusCode === "E00050"){
-                                    res.redirect("/photo");
-                                }
-                                else{
-                                    console.log(response.statusCode)
-                                    res.redirect("/fail"); 
-                                }
-                                // if error E00050 then photo
+                                res.redirect("/fail");
                             }
                         })  
                     }

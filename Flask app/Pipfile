@@ -20,6 +20,7 @@ marshmallow-sqlalchemy = "*"
 deepface = "*"
 cloudinary = "*"
 requests = "*"
+tensorflow = "*"
 
 [dev-packages]
 

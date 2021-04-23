@@ -21,13 +21,13 @@ const url_id=document.getElementById("url_id").innerText;
     }
 
 
-    function savePhoto(){
-        // alert(imgUrl);
-        Webcam.upload( imgUrl, '/'+url_id+'/photo', function(code, text) {
-            // alert(code, text);
+    // function savePhoto(){
+    //     // alert(imgUrl);
+    //     Webcam.upload( imgUrl, '/'+url_id+'/photo', function(code, text) {
+    //         // alert(code, text);
             
-        });
-    }
+    //     });
+    // }
 
 const addImageButton = document.getElementById('save');
 

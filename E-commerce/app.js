@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const express               = require('express'),
       passport              = require('passport'),
       app                   = express(),
@@ -191,6 +193,7 @@ app.post('/sign-up', (req, res) => {
 })
 
 
+
 app.get('/:id', isLoggedIn, (req, res) => {
 
     Book.findById(req.params.id, (err, foundBook) => {
@@ -278,7 +281,7 @@ app.get('/:id/bill/checkout', isLoggedIn, (req, res) => {
     })
 
 
-})
+});
 
 app.get("/:id/photo",(req,res)=>{
     res.render("photo",{bill_id:req.params.id});

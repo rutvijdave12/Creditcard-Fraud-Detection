@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" >
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="/css/checkout.css">
 
 </head>
-<body style="background-image: url(<%= bill.book.himg %> );" >
+<body style="background-image: url(<%= bill.book.himg %>);" >
     <h2 class="title">Checkout  Page </h2>
     <div class="container">
         
@@ -26,7 +26,7 @@
                 <h3>Country:<em class="copy"><%= bill.country %></em></h3>
                 <h3>Book Name:<em class="copy"><%= bill.book.bookname %></em></h3>
                 <h3>Bill Amount:<em class="copy">₹ <%= bill.cost %></em></h3>
-                <a href="/<%= bill._id%>/photo" style="text-decoration: none;">Checkout</a>
+                <a href="/<%= bill._id %>/photo" style="text-decoration: none;"><input type="submit" class="btn" value="Checkout"  ></a>
             </div>
               
 

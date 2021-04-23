@@ -1,5 +1,5 @@
 const url_id=document.getElementById("url_id").innerText;
-    // load webcam
+ 
     Webcam.set({
         width:450,
         height:450,
@@ -13,7 +13,7 @@ const url_id=document.getElementById("url_id").innerText;
         Webcam.snap(function(data_uri){
             imgUrl = data_uri;
             Webcam.reset();
-            document.getElementById("camera").innerHTML = `<img src="${data_uri}" >`
+            document.getElementById("camera").innerHTML = `<img src="${data_uri}" height=400 width=400 style="padding:20px;" >`
             document.querySelector(".capture").classList.add("hide");
             document.querySelector(".save").classList.remove("hide");
 
@@ -21,20 +21,13 @@ const url_id=document.getElementById("url_id").innerText;
     }
 
 
-    // function savePhoto(){
-    //     // alert(imgUrl);
-    //     Webcam.upload( imgUrl, '/'+url_id+'/photo', function(code, text) {
-    //         // alert(code, text);
-            
-    //     });
-    // }
+ 
 
-const addImageButton = document.querySelector('.save');
+const addImageButton = document.getElementById('save');
 
 addImageButton.addEventListener('click', async event => {
     
   const url = 'http://localhost:3000/'+url_id+'/photo';
-
   const data={imgUrl};
   const response = await fetch(url, {
     method: 'POST',
@@ -61,3 +54,5 @@ addImageButton.addEventListener('click', async event => {
         
 
     }
+    
+    

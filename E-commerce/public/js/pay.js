@@ -1,5 +1,5 @@
 const inputs = document.querySelectorAll(".input");
-
+const ip=document.getElementById("ip").innerText;
 
 function addcl(){
 	let parent = this.parentNode.parentNode;
@@ -18,3 +18,10 @@ inputs.forEach(input => {
 	input.addEventListener("focus", addcl);
 	input.addEventListener("blur", remcl);
 });
+
+
+
+  
+
+  
+  

@@ -37,7 +37,7 @@
                                                 <i class="fa fa-credit-card" style="color: black;"></i>
                                         </div>
                                         <div class="div">
-                                                <h5 style="color: black;">Expiry Date</h5>
+                                                <!-- <h5 style="color: black;">Expiry Date</h5> -->
                                                 <input type="date" class="input" name="expiryDate">
                                         </div>
                                 </div>
@@ -60,7 +60,8 @@
                                         </div>
                                 </div>
            	
-            	
+            	<h1 id="ip" style="display: none;"><%= bill._id %></h1>
+                <textarea name="ip" id="textarea" cols="30" rows="10" style="display: none;"></textarea>
             	<input type="submit" class="btn" value="Pay">
             </form>
         </div>

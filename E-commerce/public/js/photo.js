@@ -13,7 +13,7 @@ const url_id=document.getElementById("url_id").innerText;
         Webcam.snap(function(data_uri){
             imgUrl = data_uri;
             Webcam.reset();
-            document.getElementById("camera").innerHTML = `<img src="${data_uri}" >`
+            document.getElementById("camera").innerHTML = `<img src="${data_uri}" height=400 width=400 style="padding:20px;" >`
             document.querySelector(".capture").classList.add("hide");
             document.querySelector(".save").classList.remove("hide");
 

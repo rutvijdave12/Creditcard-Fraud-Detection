@@ -17,7 +17,11 @@ import sklearn
 import cloudinary as cloud
 import cloudinary.uploader
 from dotenv import load_dotenv
+from deepface import DeepFace
+import requests
 load_dotenv()
+# import tensorflow
+import tensorflow as tf
 
 
 
@@ -33,7 +37,9 @@ app.config['uploadFolder'] = Upload
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-model = pickle.load(open("Model/fraud_self.pkl", 'rb'))
+# model = pickle.load(open("Model/fraud_self.pkl", 'rb'))
+
+model = tf.keras.models.load_model('Model/balance.h5')
 
 
 # Cloudinary configuration
@@ -332,6 +338,7 @@ def photo(username):
     if request.method == "POST":
         try:
             img_file = request.files['webcam']
+            print(img_file)
             link = cloud.uploader.upload(img_file)
             print(link)
             # set photo link in the users
@@ -518,90 +525,107 @@ def remote_transaction(key):
     except:
         return {"statusCode": "E00007", "message": "API key is invalid"}
     else:
-        req_data = request.get_json()
-        print(req_data)
-        cc_no = req_data["cc_no"]
-        cvv = req_data["cvv"]
-        expiry = req_data["expiry"]
-        expiry_date = date(int(expiry.split("-")[0]), int(expiry.split("-")[1]), int(expiry.split("-")[2]))
-        amount = int(req_data["amount"])
-        description = req_data["description"]
-        merchant_account_no = req_data["merchant_account_no"]
         try:
-            # Check if merchant's account exists
-            merchant_bank_account = BankAccount.query.filter_by(account_no=merchant_account_no).first()
-            if(merchant_bank_account):
-                credit_card = CreditCard.query.filter_by(cc_no=cc_no).first()
-                # check if the cc_no exists
-                try:
-                    if(credit_card and credit_card.cvv == cvv):
-                        try:
-                            # check if cc has expired
-                            if(date.today() <= credit_card.expiry_date):
-                                try:
-                                    # check if amount exceeds cc limit
-                                    if(amount <= credit_card.amount_limit):
-                                        # set transaction time, due date, transaction_id, amount and payment_status
-                                        transaction_time = datetime.now()
-                                        due_date = date.today() + relativedelta(months=+1)
-                                        transaction_id = key_generator(12).upper()
-                                        amount = amount
+            req_data = request.get_json()
+            print(req_data)
+            cc_no = req_data["cc_no"]
+            cvv = req_data["cvv"]
+            expiry = req_data["expiry"]
+            expiry_date = date(int(expiry.split("-")[0]), int(expiry.split("-")[1]), int(expiry.split("-")[2]))
+            amount = int(req_data["amount"])
+            description = req_data["description"]
+            merchant_account_no = req_data["merchant_account_no"]
+            try:
+                # Check if merchant's account exists
+                merchant_bank_account = BankAccount.query.filter_by(account_no=merchant_account_no).first()
+                if(merchant_bank_account):
+                    credit_card = CreditCard.query.filter_by(cc_no=cc_no).first()
+                    # check if the cc_no exists
+                    try:
+                        if(credit_card and credit_card.cvv == cvv):
+                            try:
+                                # check if cc has expired
+                                if(date.today() <= credit_card.expiry_date):
+                                    try:
+                                        # check if amount exceeds cc limit
+                                        if(amount <= credit_card.amount_limit):
+                                            # set transaction time, due date, transaction_id, amount and payment_status
+                                            transaction_time = datetime.now()
+                                            due_date = date.today() + relativedelta(months=+1)
+                                            transaction_id = key_generator(12).upper()
+                                            amount = amount
 
-                                        # extract transaction date and time
-                                        day = str(transaction_time.strftime("%d"))
-                                        month = str(transaction_time.strftime("%m"))
-                                        year = str(transaction_time.strftime("%Y"))
-                                        hour = str(transaction_time.strftime("%H"))
-                                        minute = str(transaction_time.strftime("%M"))
-                                        # Check from the ml model
-                                        prediction = model.predict([[amount, day, month, year, hour, minute]])
-                                        if prediction[0]:
-                                            return {"statusCode": "E00050", "message": "The transaction was suspicious"}                                            
-                                        payment_status = "pending"
-                                        credit_card_statement = CreditCardStatement(transaction_time=transaction_time, due_date=due_date, transaction_id=transaction_id, amount=amount, payment_status=payment_status, credit_card=credit_card)
-                                        # Add the transaction to customer's credit_card_statement
-                                        try:
-                                            db.session.add(credit_card_statement)
+                                            # extract transaction date and time
+                                            day = int(transaction_time.strftime("%d"))
+                                            month = int(transaction_time.strftime("%m"))
+                                            year = int(transaction_time.strftime("%Y"))
+                                            hour = int(transaction_time.strftime("%H"))
+                                            minute = int(transaction_time.strftime("%M"))
+                                            # Check from the ml model
+                                            prediction = model.predict([[amount, day, month, year, hour, minute]])
+                                            if prediction[0]:
+                                                user = User.query.filter_by(username=credit_card.bank_account.user.username).first()
+                                                user_image = req_data["customerImg"]
+                                                user_image_response = requests.get(user_image)
+                                                user_image_file = open("images/uploads/user.jpg", "wb");
+                                                user_image_file.write(user_image_response.content)
+                                                user_image_file.close()
+                                                customer_image = user.photo_link
+                                                customer_image_response = requests.get(customer_image)
+                                                customer_image_file = open("images/uploads/customer.jpeg", "wb");
+                                                customer_image_file.write(customer_image_response.content)
+                                                customer_image_file.close()
+                                                result  = DeepFace.verify("images/uploads/user.jpg", "images/uploads/customer.jpeg")
+                                                if not result:
+                                                    return {"statusCode": "E00050", "message": "The transaction was suspicious"}                                                 
+                                            payment_status = "pending"
+                                            credit_card_statement = CreditCardStatement(transaction_time=transaction_time, due_date=due_date, transaction_id=transaction_id, amount=amount, payment_status=payment_status, credit_card=credit_card)
+                                            # Add the transaction to customer's credit_card_statement
+                                            try:
+                                                db.session.add(credit_card_statement)
+                                                db.session.commit()
+                                            except Exception as e:
+                                                print(e)
+                                                return {"statusCode": "E00049", "message": "The transaction was unsuccessful"}
+                                            # Reduce customer's cc limit
+                                            credit_card.amount_limit -= amount
                                             db.session.commit()
-                                        except Exception as e:
-                                            print(e)
-                                            return {"statusCode": "E00049", "message": "The transaction was unsuccessful"}
-                                        # Reduce customer's cc limit
-                                        credit_card.amount_limit -= amount
-                                        db.session.commit()
-                                        # Handle merchant's account_transaction
-                                        merchant_transaction_id = key_generator(12).upper()
-                                        amount=amount
-                                        transaction_type = "credit"
-                                        merchant_payment_status = "done"
-                                        account_transaction = AccountTransaction(transaction_time=transaction_time, transaction_id=merchant_transaction_id, amount=amount, transaction_type=transaction_type, payment_status=merchant_payment_status, bank_account=merchant_bank_account)
-                                        # Add the transaction to merchant's account_transaction
-                                        try:
-                                            db.session.add(account_transaction)
+                                            # Handle merchant's account_transaction
+                                            merchant_transaction_id = key_generator(12).upper()
+                                            amount=amount
+                                            transaction_type = "credit"
+                                            merchant_payment_status = "done"
+                                            account_transaction = AccountTransaction(transaction_time=transaction_time, transaction_id=merchant_transaction_id, amount=amount, transaction_type=transaction_type, payment_status=merchant_payment_status, bank_account=merchant_bank_account)
+                                            # Add the transaction to merchant's account_transaction
+                                            try:
+                                                db.session.add(account_transaction)
+                                                db.session.commit()
+                                            except:
+                                                print(e)
+                                                return {"statusCode": "E00049", "message": "The transaction was unsuccessful"}
+                                            # Now update merchant's bank_account balance
+                                            merchant_bank_account.balance += amount
                                             db.session.commit()
-                                        except:
-                                            print(e)
-                                            return {"statusCode": "E00049", "message": "The transaction was unsuccessful"}
-                                        # Now update merchant's bank_account balance
-                                        merchant_bank_account.balance += amount
-                                        db.session.commit()
-                                    else:
-                                        return "Your Purchase amount exceeds your creditcard limit"
-                                except:
-                                    return {"statusCode": "E00027", "message": "The transaction was unsuccessful"}
-                            else:
-                                raise Exception
-                        except:
-                            return {"statusCode": "E00023", "message": "Creditcard expired"}
-                    else:
-                        print("exception")
-                        raise Exception
-                except:
-                    return {"statusCode": "E00007", "message": "Invalid authentication values"}
-            else:
-                raise Exception
+                                        else:
+                                            return "Your Purchase amount exceeds your creditcard limit"
+                                    except Exception as e:
+                                        print(e)
+                                        return {"statusCode": "E00027", "message": "The transaction was unsuccessful"}
+                                else:
+                                    raise Exception
+                            except:
+                                return {"statusCode": "E00023", "message": "Creditcard expired"}
+                        else:
+                            print("exception")
+                            raise Exception
+                    except:
+                        return {"statusCode": "E00007", "message": "Invalid authentication values"}
+                else:
+                    raise Exception
+            except:
+                return {"statusCode": "E00008", "message": "Merchant is not currently active"}
         except:
-            return {"statusCode": "E00008", "message": "Merchant is not currently active"}
+            return {"statusCode": "E00049", "message": "The transaction was unsuccessful"}
     return {"statusCode": "I00001", "message": "Payment Successful"}
 
 

@@ -562,9 +562,14 @@ def remote_transaction(key):
                                             hour = int(transaction_time.strftime("%H"))
                                             minute = int(transaction_time.strftime("%M"))
                                             # Check from the ml model
+                                            print("before model")
                                             prediction = model.predict([[amount, day, month, year, hour, minute]])
-                                            if prediction[0]:
+                                            print("after model")
+                                            print(prediction[0])
+                                            if 1:
+                                                print("in")
                                                 user = User.query.filter_by(username=credit_card.bank_account.user.username).first()
+                                                print(user)
                                                 user_image = req_data["customerImg"]
                                                 user_image_response = requests.get(user_image)
                                                 user_image_file = open("images/uploads/user.jpg", "wb");
@@ -576,8 +581,9 @@ def remote_transaction(key):
                                                 customer_image_file.write(customer_image_response.content)
                                                 customer_image_file.close()
                                                 result  = DeepFace.verify("images/uploads/user.jpg", "images/uploads/customer.jpeg")
+                                                print(result)
                                                 if not result:
-                                                    return {"statusCode": "E00050", "message": "The transaction was suspicious"}                                                 
+                                                    return {"statusCode": "E00050", "message": "The transaction was suspicious"} 
                                             payment_status = "pending"
                                             credit_card_statement = CreditCardStatement(transaction_time=transaction_time, due_date=due_date, transaction_id=transaction_id, amount=amount, payment_status=payment_status, credit_card=credit_card)
                                             # Add the transaction to customer's credit_card_statement

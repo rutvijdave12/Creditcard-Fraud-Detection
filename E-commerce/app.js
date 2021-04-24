@@ -11,11 +11,6 @@ const express               = require('express'),
       fetch                 = require('node-fetch');
       cloudinary = require('cloudinary').v2;
       expressip = require('express-ip');
- 
-
-
-    //   bcrypt                = require('bcrypt');
-//  multer=require('multer');
 
 
 
@@ -108,9 +103,9 @@ app.use(function (req, res, next) {
 });
 
 cloudinary.config({ 
-    cloud_name: 'dxbi7mov0', 
-    api_key: '941151979664916', 
-    api_secret: 'aWSygb2H2FD2HvgS61_mQw27_eo' 
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
+    api_key: process.env.CLOUDINARY_API_KEY, 
+    api_secret: process.env.CLOUDINARY_API_SECRET 
   });
 
 
@@ -156,16 +151,16 @@ app.post("/sign-in", isNotLoggedIn, passport.authenticate("local",
 
 
 
-app.get('/logout', function (req, res) {
+app.get('/logout', isLoggedIn, function (req, res) {
     req.logout();
     res.redirect('/');
 });
 
-app.get('/sign-up', (req, res) => {
+app.get('/sign-up', isNotLoggedIn, (req, res) => {
     res.render('sign-up');
 })
 
-app.post('/sign-up', (req, res) => {
+app.post('/sign-up', isNotLoggedIn, (req, res) => {
     User.register({ username: req.body.username, email: req.body.email }, req.body.password, function (err, user) {
 
         if (err) {
@@ -198,8 +193,7 @@ app.get('/:id', isLoggedIn, (req, res) => {
 
     Book.findById(req.params.id, (err, foundBook) => {
         if (err) {
-            // console.log("4")
-            // console.log(err);
+            console.log(err);
         } else {
             res.render('info', { book: foundBook });
         }
@@ -283,21 +277,20 @@ app.get('/:id/bill/checkout', isLoggedIn, (req, res) => {
 
 });
 
-app.get("/:id/photo",(req,res)=>{
+app.get("/:id/photo", isLoggedIn, (req,res)=>{
     res.render("photo",{bill_id:req.params.id});
    
 })
 
 app.post("/:id/photo", isLoggedIn, (req, res) => {
-    console.log("OUT");
-    const data=req.body;
-    // console.log(data);
-
-    cloudinary.uploader.upload(data.imgUrl, function(error, result) {
-        // console.log(result, error)
-        req.user.userImg=result.secure_url;
-        req.user.save();
-
+    cloudinary.uploader.upload(req.body.imgUrl, function(err, result) {
+        if(err){
+            console.log(err);
+        }
+        else{
+            req.user.userImg=result.secure_url;
+            req.user.save();
+        }
     });
 });
 
@@ -319,79 +312,57 @@ app.get('/:id/bill/checkout/pay', isLoggedIn, (req, res) => {
 app.post('/:id/bill/checkout/pay', isLoggedIn, (req, res) => {
 
    
-    fetch('https://api.ipify.org/?format=json')
-	.then(results => results.json())
-	.then(data => {
-		fetch('http://api.ipstack.com/'+data.ip+'?access_key=a170daeddbc0e00f8bb893191516082f')
-        .then(result =>result.json())
-        .then(data=>{
-            console.log(data);
-            let body = {
-                cc_no: req.body.cc_no,
-                cvv: req.body.cvv,
-                expiry: req.body.expiryDate,
-                amount: req.body.amount,
-                description: req.body.description,
-                merchant_account_no: "87944526076700",
-                ip:data
-            };
-            
-            fetch('http://127.0.0.1:5000/G7RUTMM0BAGPS0529MF53XAXA0TFZH49HE9X9SULXK9WC5ZPU0/remote_transaction', {
-                method: 'POST',
-                body: JSON.stringify(body),
-                headers: { 'Content-Type': 'application/json' }
-            }).then(res => res.json())
-              .then(response => {
-                  if(response.statusCode === "I00001"){
-                      console.log("in")
-                      Bookbuy.find({buyer: req.user._id}, function(err, foundBills){
-                          console.log(foundBills);
-                          foundBills.forEach(function(bill){
-                              if(bill.paymentStatus === "pending"){
-                                  bill.paymentStatus = "success";
-                                  bill.save(function(err, savedBill){
-                                      if(err){
-                                          console.log(err);
-                                      }
-                                      else{
-                                          console.log(savedBill);
-                                          res.redirect("/success");
-                                      }
-                                  })  
-                              }
-                          })
-                      })
-                  }
-                  else{
-                    Bookbuy.find({buyer: req.user._id}, function(err, foundBills){
-                        foundBills.forEach(function(bill){
-                            if(bill.paymentStatus === "pending"){
-                                bill.paymentStatus = "failed";
-                                bill.save(function(err, savedBill){
-                                    if(err){
-                                        console.log(err);
-                                    }
-                                    else{
-                                        console.log(savedBill);
-                                        
-                                        if(response.statusCode="E00050"){
-                                            // res.redirect("/"+bill._id+"photo");
-                                            res.redirect("/fail");
-                                        }
-                                        
-                                        
-                                    }
-                                })  
-                            }
-                        })
-                    })
-                  }
+    let data = {
+        cc_no: req.body.cc_no,
+        cvv: req.body.cvv,
+        expiry: req.body.expiryDate,
+        amount: req.body.amount,
+        description: req.body.description,
+        merchant_account_no: "87944526076700",
+        customerImg: req.user.userImg
+    };
+    
+    fetch('http://127.0.0.1:5000/G7RUTMM0BAGPS0529MF53XAXA0TFZH49HE9X9SULXK9WC5ZPU0/remote_transaction', {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: { 'Content-Type': 'application/json' }
+    }).then(res => res.json())
+      .then(response => {
+          if(response.statusCode === "I00001"){
+              Bookbuy.findById(req.params.id, function(err, foundBill){
+                    console.log(foundBill);
+                    foundBill.paymentStatus = "success";
+                    foundBill.save(function(err, savedBill){
+                        if(err){
+                            console.log(err);
+                        }
+                        else{
+                            console.log(savedBill);
+                            res.redirect("/success");
+                        }
+                    });  
               });
-            
-        })
+          }
+          else{
+                Bookbuy.findById(req.params.id, function(err, foundBill){
+                    foundBill.paymentStatus = "failed";
+                    foundBill.save(function(err, savedBill){
+                        if(err){
+                            console.log(err);
+                        }
+                        else{
+                            console.log(savedBill);
+                            console.log(response)
+                            res.redirect("/fail");
+                        }
+                    });  
+                });
+            }
+        });   
+});   
 
-	});    
-})
+
+
 // Middleware
 function isLoggedIn(req, res, next) {
     if (req.isAuthenticated()) {

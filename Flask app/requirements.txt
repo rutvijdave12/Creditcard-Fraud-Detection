@@ -1,23 +1,17 @@
 cloudinary==1.25.0
 DateTime==4.3
 deepface==0.0.50
+email-validator==1.1.2
 Flask==1.1.2
 flask-marshmallow==0.14.0
 Flask-SQLAlchemy==2.5.1
 Flask-WTF==0.14.3
-h5py==2.10.0
-Jinja2==2.11.3
-Keras==2.4.3
-Keras-Preprocessing==1.1.2
-marshmallow==3.11.1
 marshmallow-sqlalchemy==0.24.2
 passlib==1.7.4
 PyMySQL==1.0.2
 python-dateutil==2.8.1
 python-dotenv==0.17.0
 requests==2.25.1
-SQLAlchemy==1.4.11
-tensorflow==2.4.1
-tensorflow-estimator==2.4.0
+tensorflow-cpu==2.4.1
 WTForms==2.3.3
 

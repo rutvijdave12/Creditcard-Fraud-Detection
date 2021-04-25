@@ -18,8 +18,9 @@ marshmallow-sqlalchemy = "*"
 deepface = "*"
 cloudinary = "*"
 requests = "*"
-tensorflow = "*"
 gunicorn = "*"
+tensorflow-cpu = "*"
+email-validator = "*"
 
 [dev-packages]
 

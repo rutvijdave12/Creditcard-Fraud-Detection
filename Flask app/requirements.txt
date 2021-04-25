@@ -1,7 +1,6 @@
 cloudinary==1.25.0
 DateTime==4.3
 deepface==0.0.50
-email-validator==1.1.2
 Flask==1.1.2
 flask-marshmallow==0.14.0
 Flask-SQLAlchemy==2.5.1

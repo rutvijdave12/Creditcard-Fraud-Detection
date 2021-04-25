@@ -21,6 +21,7 @@ deepface = "*"
 cloudinary = "*"
 requests = "*"
 tensorflow = "*"
+gunicorn = "*"
 
 [dev-packages]
 

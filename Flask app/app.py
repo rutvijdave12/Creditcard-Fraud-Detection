@@ -32,8 +32,6 @@ import tensorflow as tf
 app = Flask(__name__,template_folder='templates',static_folder = 'static')
 app.config["SECRET_KEY"] = "secret123"
 
-Upload = 'static/upload'
-app.config['uploadFolder'] = Upload
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -56,7 +54,7 @@ cloud.config.update = ({
 # db = SQLAlchemy(app)
 
 # Database 
-app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://{username}:{password}@{server}/bankDb".format(username="root",password="", server="localhost")
+app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://{username}:{password}@{server}/{database_name}".format(username=os.environ.get("MYSQL_ADDON_USER"),password=os.environ.get("MYSQL_ADDON_PASSWORD"), server=os.environ.get("MYSQL_ADDON_HOST"), database_name=os.environ.get("MYSQL_ADDON_DB"))
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # Init db
 db = SQLAlchemy(app)

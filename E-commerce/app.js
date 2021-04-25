@@ -193,7 +193,7 @@ app.get('/:id', isLoggedIn, (req, res) => {
 
     Book.findById(req.params.id, (err, foundBook) => {
         if (err) {
-            console.log(err);
+            // console.log(err);
         } else {
             res.render('info', { book: foundBook });
         }
@@ -233,18 +233,8 @@ app.post('/:id/bill', isLoggedIn, (req, res) => {
         buyer: req.user._id
     });
 
-    const userBill_1 = new Bookbuy({
-        name: req.body.name_1,
-        mnumber: req.body.number_1,
-        address: req.body.address_1,
-        country: req.body.country_1,
-        city: req.body.city_1,
-        zipcode:req.body.code_1,
-        book:req.params.id,
-        cost: 1000,
-        buyer: req.user._id
-    });
-    userBill_1.save(function (err, savedBill) {
+  
+    userBill.save(function (err, savedBill) {
         if (err) {
             console.log(err)
         } else {

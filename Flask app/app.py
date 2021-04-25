@@ -13,7 +13,7 @@ from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
 import string
 import pickle
-import sklearn
+# import sklearn
 import cloudinary as cloud
 import cloudinary.uploader
 from dotenv import load_dotenv

@@ -17,7 +17,7 @@ import pickle
 import cloudinary as cloud
 import cloudinary.uploader
 from dotenv import load_dotenv
-from deepface import DeepFace
+# from deepface import DeepFace
 import requests
 load_dotenv()
 # import tensorflow

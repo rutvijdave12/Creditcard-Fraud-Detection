@@ -15,11 +15,11 @@ python-dateutil = "*"
 datetime = "*"
 python-dotenv = "*"
 marshmallow-sqlalchemy = "*"
-deepface = "*"
 cloudinary = "*"
 requests = "*"
 gunicorn = "*"
 email-validator = "*"
+tensorflow-cpu = "*"
 
 [dev-packages]
 

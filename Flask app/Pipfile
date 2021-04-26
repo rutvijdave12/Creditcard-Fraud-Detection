@@ -19,8 +19,8 @@ deepface = "*"
 cloudinary = "*"
 requests = "*"
 gunicorn = "*"
-tensorflow-cpu = "*"
 email-validator = "*"
+tensorflow-cpu = "*"
 
 [dev-packages]
 

@@ -11,9 +11,7 @@ const express               = require('express'),
       fetch                 = require('node-fetch');
       cloudinary = require('cloudinary').v2;
       expressip = require('express-ip');
-
-
-
+ 
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(__dirname + '/public'));
@@ -194,7 +192,7 @@ app.get('/:id', isLoggedIn, (req, res) => {
 
     Book.findById(req.params.id, (err, foundBook) => {
         if (err) {
-            console.log(err);
+            
         } else {
             res.render('info', { book: foundBook });
         }
@@ -273,14 +271,15 @@ app.get("/:id/photo", isLoggedIn, (req,res)=>{
 })
 
 app.post("/:id/photo", isLoggedIn, (req, res) => {
-    cloudinary.uploader.upload(req.body.imgUrl, function(err, result) {
-        if(err){
-            console.log(err);
-        }
-        else{
-            req.user.userImg=result.secure_url;
-            req.user.save();
-        }
+    console.log("OUT");
+    const data=req.body;
+    
+
+    cloudinary.uploader.upload(data.imgUrl, function(error, result) {
+        
+        req.user.userImg=result.secure_url;
+        req.user.save();
+
     });
 });
 
@@ -350,6 +349,10 @@ app.post('/:id/bill/checkout/pay', isLoggedIn, (req, res) => {
             }
         });   
 });   
+
+
+
+
 
 
 

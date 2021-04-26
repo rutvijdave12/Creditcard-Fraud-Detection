@@ -17,7 +17,7 @@ import pickle
 import cloudinary as cloud
 import cloudinary.uploader
 from dotenv import load_dotenv
-# from deepface import DeepFace
+from deepface import DeepFace
 import requests
 load_dotenv()
 # import tensorflow
@@ -62,8 +62,6 @@ db = SQLAlchemy(app)
 # Init ma
 ma = Marshmallow(app)
 
-# cached variable
-global cachedVariable
 
 # User Class/Model
 class User(db.Model):
@@ -580,6 +578,7 @@ def remote_transaction(key):
                                                 customer_image_file.write(customer_image_response.content)
                                                 customer_image_file.close()
                                                 result  = DeepFace.verify("images/uploads/user.jpg", "images/uploads/customer.jpeg")
+                                                print("==========================")
                                                 print(result)
                                                 if not result:
                                                     return {"statusCode": "E00050", "message": "The transaction was suspicious"} 

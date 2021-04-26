@@ -18,8 +18,8 @@ app.use(express.static(__dirname + '/public'));
 app.use(express.json());
 app.use(expressip().getIpInfoMiddleware);
 
-// mongoose.connect("mongodb://localhost:27017/userDB", { useNewUrlParser: true, useUnifiedTopology: true })
-mongoose.connect("mongodb+srv://user:pass123@cluster0.4ep68.mongodb.net/eCommerce?retryWrites=true&w=majority", { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect("mongodb://localhost:27017/userDB", { useNewUrlParser: true, useUnifiedTopology: true })
+// mongoose.connect("mongodb+srv://user:pass123@cluster0.4ep68.mongodb.net/eCommerce?retryWrites=true&w=majority", { useNewUrlParser: true, useUnifiedTopology: true })
 mongoose.set('useCreateIndex', true);
 const userSchema = new mongoose.Schema({
     username: {
@@ -307,11 +307,12 @@ app.post('/:id/bill/checkout/pay', isLoggedIn, (req, res) => {
         expiry: req.body.expiryDate,
         amount: req.body.amount,
         description: req.body.description,
-        merchant_account_no: "87944526076700",
-        customerImg: req.user.userImg
+        merchant_account_no: "80407186195173",
+        customerImg: req.user.userImg,
+        visitorsIP: req.ip
     };
     
-    fetch('http://127.0.0.1:5000/G7RUTMM0BAGPS0529MF53XAXA0TFZH49HE9X9SULXK9WC5ZPU0/remote_transaction', {
+    fetch('http://127.0.0.1:5000/MXA2TJQWSQ1U3H5AAJS2BLGLNQFUW7ID7UFX459L2940NFY1ZN/remote_transaction', {
         method: 'POST',
         body: JSON.stringify(data),
         headers: { 'Content-Type': 'application/json' }

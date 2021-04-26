@@ -308,7 +308,7 @@ app.post('/:id/bill/checkout/pay', isLoggedIn, (req, res) => {
         amount: req.body.amount,
         description: req.body.description,
         merchant_account_no: "80407186195173",
-        customerImg: req.user.userImg,
+        clientImg: req.user.userImg,
         visitorsIP: req.ip
     };
     

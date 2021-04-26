@@ -20,7 +20,6 @@ requests = "*"
 gunicorn = "*"
 email-validator = "*"
 tensorflow-cpu = "*"
-deepface = "==0.0.10"
 
 [dev-packages]
 

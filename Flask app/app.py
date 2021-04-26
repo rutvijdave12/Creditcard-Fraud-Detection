@@ -17,7 +17,6 @@ import pickle
 import cloudinary as cloud
 import cloudinary.uploader
 from dotenv import load_dotenv
-from deepface import DeepFace
 import requests
 load_dotenv()
 # import tensorflow
@@ -564,23 +563,13 @@ def remote_transaction(key):
                                             print("after model")
                                             print(prediction[0])
                                             if 1:
-                                                print("in")
                                                 user = User.query.filter_by(username=credit_card.bank_account.user.username).first()
-                                                print(user)
-                                                user_image = req_data["customerImg"]
-                                                user_image_response = requests.get(user_image)
-                                                user_image_file = open("images/uploads/user.jpg", "wb");
-                                                user_image_file.write(user_image_response.content)
-                                                user_image_file.close()
+                                                client_image = req_data["clientImg"]
                                                 customer_image = user.photo_link
-                                                customer_image_response = requests.get(customer_image)
-                                                customer_image_file = open("images/uploads/customer.jpeg", "wb");
-                                                customer_image_file.write(customer_image_response.content)
-                                                customer_image_file.close()
-                                                result  = DeepFace.verify("images/uploads/user.jpg", "images/uploads/customer.jpeg")
-                                                print("==========================")
-                                                print(result)
-                                                if not result:
+                                                response = requests.post("http://0.0.0.0:500/verify", json = {"client_image": client_image, "customer_image": customer_image})
+                                                print(response)
+                                                if not response:
+                                                    print("in")
                                                     return {"statusCode": "E00050", "message": "The transaction was suspicious"} 
                                             payment_status = "pending"
                                             credit_card_statement = CreditCardStatement(transaction_time=transaction_time, due_date=due_date, transaction_id=transaction_id, amount=amount, payment_status=payment_status, credit_card=credit_card)

@@ -21,7 +21,7 @@ from deepface import DeepFace
 import requests
 load_dotenv()
 # import tensorflow
-import tensorflow as tf
+# import tensorflow as tf
 
 
 
@@ -37,7 +37,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 # model = pickle.load(open("Model/fraud_self.pkl", 'rb'))
 
-model = tf.keras.models.load_model('Model/balance.h5')
+# model = tf.keras.models.load_model('Model/balance.h5')
 
 
 # Cloudinary configuration
@@ -303,7 +303,6 @@ def key_generator(size=50, chars=string.ascii_uppercase + string.digits):
 # Index
 @app.route("/")
 def index():
-    print(request.remote_addr)
     return render_template("index.html")
 
 # Register
@@ -517,6 +516,7 @@ def developer_register():
 # Developer remote payment
 @app.route("/<string:key>/remote_transaction", methods=["POST"])
 def remote_transaction(key):
+    print("IP address: " + request.remote_addr)
     try:
         developer = Developer.query.filter_by(secret_api_key=key).first()
         if(not developer):

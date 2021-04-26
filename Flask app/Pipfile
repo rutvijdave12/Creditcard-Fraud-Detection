@@ -20,7 +20,6 @@ cloudinary = "*"
 requests = "*"
 gunicorn = "*"
 email-validator = "*"
-tensorflow-cpu = "*"
 
 [dev-packages]
 

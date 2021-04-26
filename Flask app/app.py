@@ -21,7 +21,7 @@ from dotenv import load_dotenv
 import requests
 load_dotenv()
 # import tensorflow
-# import tensorflow as tf
+import tensorflow as tf
 
 
 
@@ -37,7 +37,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 # model = pickle.load(open("Model/fraud_self.pkl", 'rb'))
 
-# model = tf.keras.models.load_model('Model/balance.h5')
+model = tf.keras.models.load_model('Model/balance.h5')
 
 
 # Cloudinary configuration

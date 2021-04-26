@@ -18,6 +18,7 @@ import cloudinary as cloud
 import cloudinary.uploader
 from dotenv import load_dotenv
 from deepface import DeepFace
+import face_recognition
 import requests
 load_dotenv()
 # import tensorflow
@@ -579,9 +580,16 @@ def remote_transaction(key):
                                                 customer_image_file = open("images/uploads/customer.jpeg", "wb");
                                                 customer_image_file.write(customer_image_response.content)
                                                 customer_image_file.close()
-                                                result  = DeepFace.verify("images/uploads/user.jpg", "images/uploads/customer.jpeg")
-                                                print(result)
-                                                if not result:
+                                                # result  = DeepFace.verify("images/uploads/user.jpg", "images/uploads/customer.jpeg")
+                                                user_image = face_recognition.load_image_file("images/uploads/user.jpg")
+                                                customer_image = face_recognition.load_image_file("images/uploads/customer.jpeg")
+                                                user_encoding = face_recognition.face_encodings(user_image)[0]
+                                                customer_encoding = face_recognition.face_encodings(customer_image)[0]
+                                                results = face_recognition.compare_faces([user_encoding],customer_encoding)
+                                                print(results[0])
+                                               
+                                                # print(result)
+                                                if not results[0]:
                                                     return {"statusCode": "E00050", "message": "The transaction was suspicious"} 
                                             payment_status = "pending"
                                             credit_card_statement = CreditCardStatement(transaction_time=transaction_time, due_date=due_date, transaction_id=transaction_id, amount=amount, payment_status=payment_status, credit_card=credit_card)

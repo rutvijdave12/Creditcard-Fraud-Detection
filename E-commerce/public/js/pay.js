@@ -1,5 +1,5 @@
 const inputs = document.querySelectorAll(".input");
-const ip=document.getElementById("ip").innerText;
+// const ip=document.getElementById("ip").innerText;
 
 function addcl(){
 	let parent = this.parentNode.parentNode;

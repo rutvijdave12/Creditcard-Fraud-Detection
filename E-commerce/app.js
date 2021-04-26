@@ -105,6 +105,7 @@ cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
     api_key: process.env.CLOUDINARY_API_KEY, 
     api_secret: process.env.CLOUDINARY_API_SECRET 
+   
   });
 
 
@@ -271,10 +272,7 @@ app.get("/:id/photo", isLoggedIn, (req,res)=>{
 })
 
 app.post("/:id/photo", isLoggedIn, (req, res) => {
-    console.log("OUT");
     const data=req.body;
-    
-
     cloudinary.uploader.upload(data.imgUrl, function(error, result) {
         
         req.user.userImg=result.secure_url;

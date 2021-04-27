@@ -25,7 +25,10 @@
         </form>
         <div class="button-panel">
             <button class="btn btn-info capture" onclick="showPreview()">Capture </button>
-            <button class="btn btn-info hide save" id="save" ><a href="/<%=bill_id%>/bill/checkout/pay" style="text-decoration: none; color:#d18f41;">Save </a></button>
+            <form id="myform" method="POST" action="/<%=bill_id%>/photo">
+                <input id="mydata" type="hidden" name="photo" value="">
+                <button class="btn btn-info hide save" id="save" >Save</button>
+            </form>
             <button class="btn btn-info clear" onclick="clearPic()">Clear </button>
             <h1 style="display: none;" id="url_id"><%=bill_id%></h1>
         </div>

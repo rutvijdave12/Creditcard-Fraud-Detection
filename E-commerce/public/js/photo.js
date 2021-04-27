@@ -14,34 +14,13 @@ const url_id=document.getElementById("url_id").innerText;
             imgUrl = data_uri;
             Webcam.reset();
             document.getElementById("camera").innerHTML = `<img src="${data_uri}" height=400 width=400 style="padding:20px;" >`
+            document.getElementById("mydata").setAttribute("value", imgUrl);
             document.querySelector(".capture").classList.add("hide");
             document.querySelector(".save").classList.remove("hide");
 
         })
     }
 
-
- 
-
-const addImageButton = document.getElementById('save');
-
-addImageButton.addEventListener('click', async event => {
-    
-  const url = 'http://localhost:3000/'+url_id+'/photo';
-  const data={imgUrl};
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(data)
-  });
-  
-  const myJson = await response.json();
-  console.log(myJson);
-  
-
-});
 
     function clearPic(){
         Webcam.unfreeze();

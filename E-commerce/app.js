@@ -271,14 +271,15 @@ app.get("/:id/photo", isLoggedIn, (req,res)=>{
 })
 
 app.post("/:id/photo", isLoggedIn, (req, res) => {
-    console.log("OUT");
-    const data=req.body;
-    
-
-    cloudinary.uploader.upload(data.imgUrl, function(error, result) {
-        
+    cloudinary.uploader.upload(req.body.photo, function(err, result) {
+        if(err){
+            console.log(err);
+            res.redirect("/");
+        }
+        console.log(result);
         req.user.userImg=result.secure_url;
         req.user.save();
+        res.redirect("/" + req.params.id + "/bill/checkout/pay");
 
     });
 });

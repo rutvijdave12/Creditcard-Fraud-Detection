@@ -13,7 +13,10 @@
             </div>
             <div class="button-panel">
                 <button class="btn btn-info capture" onclick="showPreview()">Capture </button>
-                <button class="btn btn-info hide save" onclick="savePhoto()"><a href="/{{user.username}}/accounts">Save </a></button>
+                <form id="photo-form" method="POST" action="/{{user.username}}/photo">
+                    <input id="photo" type="hidden" name="photo" value="">
+                    <button class="btn btn-info hide save" id="save" >Save</button>
+                </form>
                 <button class="btn btn-info clear" onclick="clearPic()">Clear </button>
             </div>
         </div>
@@ -39,30 +42,31 @@
                 imgUrl = data_uri;
                 Webcam.reset();
                 document.getElementById("camera").innerHTML = `<img src="${data_uri}">`
+                document.getElementById("photo").setAttribute("value", imgUrl);
                 document.querySelector(".capture").classList.add("hide");
                 document.querySelector(".save").classList.remove("hide");
             })
         }
 
-        function savePhoto(){
-            console.log(imgUrl);
-            Webcam.upload( imgUrl, 'photo', function(code, text) {
-                console.log(code, text);
-                // Upload complete!
-                // 'code' will be the HTTP response code from the server, e.g. 200
-                // 'text' will be the raw response content
-            });
-        //     var xhttp = new XMLHttpRequest();
-        //     xhttp.onreadystatechange = function() {
-        //         if (this.readyState == 4 && this.status == 200) {
-        //             console.log(this);
-        //         document.getElementById("demo").innerHTML = this.responseText;
-        //         }
-        //     };
-        //     xhttp.open("POST", "demo_post.asp", true);
-        //     xhttp.send();
+        // function savePhoto(){
+        //     console.log(imgUrl);
+        //     Webcam.upload( imgUrl, 'photo', function(code, text) {
+        //         console.log(code, text);
+        //         // Upload complete!
+        //         // 'code' will be the HTTP response code from the server, e.g. 200
+        //         // 'text' will be the raw response content
+        //     });
+        // //     var xhttp = new XMLHttpRequest();
+        // //     xhttp.onreadystatechange = function() {
+        // //         if (this.readyState == 4 && this.status == 200) {
+        // //             console.log(this);
+        // //         document.getElementById("demo").innerHTML = this.responseText;
+        // //         }
+        // //     };
+        // //     xhttp.open("POST", "demo_post.asp", true);
+        // //     xhttp.send();
             
-        }
+        // }
 
         function clearPic(){
             Webcam.unfreeze();

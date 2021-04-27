@@ -20,6 +20,7 @@ requests = "*"
 gunicorn = "*"
 email-validator = "*"
 tensorflow-cpu = "*"
+cryptography = "*"
 
 [dev-packages]
 

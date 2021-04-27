@@ -53,8 +53,8 @@ cloud.config.update = ({
 # db = SQLAlchemy(app)
 
 # Database 
-app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://{username}:{password}@{server}/{database_name}".format(username='root',password='', server='localhost', database_name='bankDb')
-# app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://{username}:{password}@{server}/{database_name}".format(username=os.environ.get("MYSQL_ADDON_USER"),password=os.environ.get("MYSQL_ADDON_PASSWORD"), server=os.environ.get("MYSQL_ADDON_HOST"), database_name=os.environ.get("MYSQL_ADDON_DB"))
+# app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://{username}:{password}@{server}/{database_name}".format(username='root',password='', server='localhost', database_name='bankDb')
+app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://{username}:{password}@{server}/{database_name}".format(username=os.environ.get("MYSQL_ADDON_USER"),password=os.environ.get("MYSQL_ADDON_PASSWORD"), server=os.environ.get("MYSQL_ADDON_HOST"), database_name=os.environ.get("MYSQL_ADDON_DB"))
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # Init db
 db = SQLAlchemy(app)
@@ -332,9 +332,10 @@ def photo(username):
     user = User.query.filter_by(username=username).first() 
     if request.method == "POST":
         try:
-            img_file = request.files['webcam']
-            print(img_file)
-            link = cloud.uploader.upload(img_file)
+            print("inside post")
+            img = request.form['photo']
+            print(img)
+            link = cloud.uploader.upload(img)
             print(link)
             # set photo link in the users
             user.photo_link = link['secure_url']
@@ -348,7 +349,7 @@ def photo(username):
         flash("You are now logged in", "success")
         return redirect("/"+ username + "/accounts")
         # file.save(os.path.join(app.config['uploadFolder'], file.filename))
-
+    print("inside get")
     return render_template("photo.html", user=user)
 
 # Login

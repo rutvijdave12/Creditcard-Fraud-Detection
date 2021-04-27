@@ -36,7 +36,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 # model = pickle.load(open("Model/fraud_self.pkl", 'rb'))
 
-model = tf.keras.models.load_model('Model/balance.h5')
+model = tf.keras.models.load_model('Model/balance2.h5')
 
 
 # Cloudinary configuration
@@ -562,8 +562,8 @@ def remote_transaction(key):
                                             print("before model")
                                             prediction = model.predict([[amount, day, month, year, hour, minute]])
                                             print("after model")
-                                            print(prediction[0])
-                                            if 1:
+                                            print(prediction[0][0])
+                                            if prediction[0][0] > 0.4:
                                                 user = User.query.filter_by(username=credit_card.bank_account.user.username).first()
                                                 client_image = req_data["clientImg"]
                                                 customer_image = user.photo_link
